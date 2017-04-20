@@ -1,2 +1,4 @@
 theme: jekyll-theme-midnight
 show_downloads: false
+title: Lock-free Binary Search Trees
+description: Analyzing performance of thread-safe implementations of BSTs
