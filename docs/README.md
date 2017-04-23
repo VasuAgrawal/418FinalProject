@@ -13,12 +13,13 @@ structure at any given time. Fine-grained locks, where only specific parts of
 the data structure are locked by each thread, allowing more threads to access
 the data structure at once.
 
-Lock-free data structures, on the other hand, utilize atomic compare-and-swap
-(CAS) operations to allow multiple threads to access the same data at the same
-time, while still ensuring that no thread is using invalid values. They are
-much more complicated to implement, but allow more concurrency and therefore
-often result in significant speedups in high-contention applications, even when
-compared to finer-grained schemes.
+[Lock-free data structures](
+    https://en.wikipedia.org/wiki/Non-blocking_algorithm), on the other hand,
+utilize atomic compare-and-swap operations to allow multiple threads to access
+the same data at the same time, while still ensuring that no thread is using
+invalid values. They are much more complicated to implement, but allow more
+concurrency and therefore often result in significant speedups in
+high-contention applications, even when compared to fine-grained schemes.
 
 ## The Challenge
 
