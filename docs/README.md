@@ -6,6 +6,20 @@ explore coarse-grained locking, fine-grained locking, and lock-free structures.
 
 ## Background
 
+Data structures often have to be modified to allow for concurrency. Applying one
+lock to the entire data structure is a simple way to prevent incorrect behavior,
+but does not permit any concurrency, as only one thread can access the data
+structure at any given time. Fine-grained locks, where only specific parts of
+the data structure are locked by each thread, allowing more threads to access
+the data structure at once.
+
+Lock-free data structures, on the other hand, utilize atomic compare-and-swap
+(CAS) operations to allow multiple threads to access the same data at the same
+time, while still ensuring that no thread is using invalid values. They are
+much more complicated to implement, but allow more concurrency and therefore
+often result in significant speedups in high-contention applications, even when
+compared to finer-grained schemes.
+
 ## The Challenge
 
 The difficulty in implementing the aforementioned binary trees lies primarily in
@@ -30,9 +44,9 @@ substantially more difficult and is beyond our scope to design from scratch.
 Rather, we intend to explore one of the approches outlined in these papers, in
 descending order of interest:
 
-1. http://dl.acm.org/citation.cfm?id=2555256
-1. http://dl.acm.org/citation.cfm?id=2611500
-1. http://dl.acm.org/citation.cfm?id=2312036
+1. [http://dl.acm.org/citation.cfm?id=2555256]()
+1. [http://dl.acm.org/citation.cfm?id=2611500]()
+1. [http://dl.acm.org/citation.cfm?id=2312036]()
 
 For development, we intend to work on our personal computers to avoid expected
 contention for resources on the GHC machines. However, for the final performance
