@@ -1,23 +1,43 @@
+#include <iostream>
+
 #include "bst.h"
 
-CoarseGrainedBST::CoarseGrainedBST () {
+CoarseGrainedBST::CoarseGrainedBST() {
     root = nullptr;
+    size = 0;
     pthread_mutex_init(&bst_lock, nullptr);
 }
 
-void CoarseGrainedBST::insert_node(
+void CoarseGrainedBST::free_node(node* current_node) {
+    if (current_node == nullptr)
+        return;
+    free_node(current_node->left);
+    free_node(current_node->right);
+    delete current_node;
+}
+
+CoarseGrainedBST::~CoarseGrainedBST() {
+    free_node(root);
+}
+
+bool CoarseGrainedBST::insert_node(
         node* current_node, int val, node* new_node) {
     if (val < current_node->value) {
-        if (current_node->left == nullptr)
+        if (current_node->left == nullptr) {
             current_node->left = new_node;
-        else
-            insert_node(current_node->left, val, new_node);
+            return true;
+        } else {
+            return insert_node(current_node->left, val, new_node);
+        }
     } else if (val > current_node->value) {
-        if (current_node->right == nullptr)
+        if (current_node->right == nullptr) {
             current_node->right = new_node;
-        else
-            insert_node(current_node->right, val, new_node);
+            return true;
+        } else {
+            return insert_node(current_node->right, val, new_node);
+        }
     }
+    return false;
 }
 
 void CoarseGrainedBST::insert(int x) {
@@ -30,8 +50,9 @@ void CoarseGrainedBST::insert(int x) {
 
     if (root == nullptr) {
         root = new_node;
-    } else {
-        insert_node(root, x, new_node);
+        ++size;
+    } else if (insert_node(root, x, new_node)) {
+        ++size;
     }
 
     pthread_mutex_unlock(&bst_lock);
@@ -66,12 +87,21 @@ bool CoarseGrainedBST::contains(int x) {
     return result;
 }
 
+int CoarseGrainedBST::fill_inorder(node* current_node, int* out, int i) {
+    if (current_node == nullptr)
+        return i;
+    i = fill_inorder(current_node->left, out, i);
+    out[i] = current_node->value;
+    return fill_inorder(current_node->right, out, ++i);
+}
+
 int* CoarseGrainedBST::in_order_traversal(int* size) {
     pthread_mutex_lock(&bst_lock);
 
-    //TODO
+    int* out = new int[this->size];
+    fill_inorder(root, out, 0);
 
     pthread_mutex_unlock(&bst_lock);
-    *size = 0;
-    return nullptr;
+    *size = this->size;
+    return out;
 }

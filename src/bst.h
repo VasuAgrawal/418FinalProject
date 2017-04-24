@@ -11,6 +11,8 @@ public:
 
     // returns the in-order traversal, stores the number of nodes in size
     virtual int* in_order_traversal(int* size) = 0;
+protected:
+    int size;
 };
 
 class CoarseGrainedBST : BinarySearchTree {
@@ -21,6 +23,7 @@ public:
     int* in_order_traversal(int* size);
 
     CoarseGrainedBST();
+    ~CoarseGrainedBST();
 
 private:
     struct node {
@@ -32,8 +35,10 @@ private:
     pthread_mutex_t bst_lock;
     node* root;
 
-    static void insert_node(node* current_node, int val, node* new_node);
+    static void free_node(node* current_node);
+    static bool insert_node(node* current_node, int val, node* new_node);
     static bool search_node(node* current_node, int val);
+    static int fill_inorder(node* current_node, int* out, int i);
 };
 
 class FineGrainedBST : BinarySearchTree {
