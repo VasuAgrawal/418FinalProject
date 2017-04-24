@@ -31,6 +31,9 @@ private:
 
     pthread_mutex_t bst_lock;
     node* root;
+
+    static void insert_node(node* current_node, int val, node* new_node);
+    static bool search_node(node* current_node, int val);
 };
 
 class FineGrainedBST : BinarySearchTree {
