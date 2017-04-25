@@ -2,6 +2,14 @@
 
 #include "bst.h"
 
+#ifdef COARSE
+#include "coarse_grained_bst.h"
+#elif FINE
+#include "fine_grained_bst.h"
+#else
+#error Implementation not specified. Valid implementations are "COARSE", "FINE".
+#endif
+
 #define N 20
 
 void print_array(int* a, int n) {
@@ -17,20 +25,21 @@ void print_array(int* a, int n) {
 int main(int argc, char** argv) {
     srand(42);
 
-    CoarseGrainedBST cg_bst;
+    BinarySearchTree* bst = new BST();
 
     for (int i = 0; i < N; ++i) {
         int x = rand() % 50;
         std::cout << "Inserting " << x << ".\n";
-        cg_bst.insert(x);
+        bst->insert(x);
     }
 
     int size;
-    int* inorder = cg_bst.in_order_traversal(&size);
+    int* inorder = bst->in_order_traversal(&size);
 
     print_array(inorder, size);
 
     delete inorder;
+    delete bst;
 
     return 0;
 }
