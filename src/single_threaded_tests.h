@@ -1,3 +1,6 @@
+#ifndef SINGLE_THREADED_TESTS_H_
+#define SINGLE_THREADED_TESTS_H_
+
 #include <memory>
 
 #include "testing.h"
@@ -14,3 +17,5 @@
 bool test_single_add();
 bool test_single_add_remove();
 bool test_bad_remove();
+
+#endif

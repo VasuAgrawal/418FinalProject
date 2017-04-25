@@ -20,7 +20,11 @@ int main(int argc, char** argv) {
     test_single_add_remove();
     test_bad_remove();
 
+    test_1_threads();
     test_2_threads();
+    test_4_threads();
+    test_8_threads();
+    test_16_threads();
     
     return 0;
 }
