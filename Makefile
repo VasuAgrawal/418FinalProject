@@ -1,8 +1,15 @@
-#default:
-	#g++ -std=c++11 -o bst-driver src/bst.cpp src/main.cpp
+CC=g++
+CFLAGS=-Wall -Wextra -Weffc++ -pedantic -std=c++11
+BUILDDIR=bin
+
+all: directory coarse
+
+directory:
+	mkdir -p $(BUILDDIR)
 
 coarse:
-	g++ -std=c++11 -o coarse src/coarse_grained_bst.cpp src/main.cpp -D COARSE
+	$(CC) $(CFLAGS) -o coarse src/coarse_grained_bst.cpp src/main.cpp -D COARSE
+	mv coarse $(BUILDDIR)
 
 clean:
-	rm -f bst-driver
+	rm -rf $(BUILDDIR)
