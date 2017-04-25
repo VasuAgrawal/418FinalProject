@@ -1,14 +1,16 @@
 CC=g++
-CFLAGS=-Wall -Wextra -pedantic -std=c++14
+CXXFLAGS=-Wall -Wextra -pedantic -std=c++14 -pthread
 BUILDDIR=bin
+TEST_SRCS=src/single_threaded_tests.cpp src/multi_threaded_tests.cpp src/main.cpp
 
 all: directory coarse
 
 directory:
 	mkdir -p $(BUILDDIR)
 
+IMPL_SRC = src/coarse_grained_bst.cpp
 coarse:
-	$(CC) $(CFLAGS) -o coarse src/coarse_grained_bst.cpp src/main.cpp -D COARSE
+	$(CC) $(CXXFLAGS) -o coarse $(IMPL_SRC) $(TEST_SRCS) -D COARSE
 	mv coarse $(BUILDDIR)
 
 clean:
