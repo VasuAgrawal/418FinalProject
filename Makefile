@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-Wall -Wextra -Weffc++ -pedantic -std=c++11
+CFLAGS=-Wall -Wextra -pedantic -std=c++11
 BUILDDIR=bin
 
 all: directory coarse

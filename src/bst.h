@@ -5,7 +5,8 @@
 
 class BinarySearchTree {
 public:
-     
+    
+    BinarySearchTree() : size(0) {};
     virtual ~BinarySearchTree() = default;
 
     virtual void insert(int x) = 0;

@@ -2,9 +2,7 @@
 
 #include "coarse_grained_bst.h"
 
-BST::BST() {
-    root = nullptr;
-    size = 0;
+BST::BST() : root(nullptr) {
     pthread_mutex_init(&bst_lock, nullptr);
 }
 
