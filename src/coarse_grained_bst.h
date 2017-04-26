@@ -13,6 +13,9 @@ public:
     BST();
     ~BST();
 
+    BST(const BST&) = delete;
+    BST& operator=(const BST&) = delete;
+
 private:
     struct node {
         int value;

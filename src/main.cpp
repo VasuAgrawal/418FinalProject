@@ -1,45 +1,30 @@
-#include <iostream>
+#include "single_threaded_tests.h"
+#include "multi_threaded_tests.h"
 
-#include "bst.h"
 
-#ifdef COARSE
-#include "coarse_grained_bst.h"
-#elif FINE
-#include "fine_grained_bst.h"
-#else
-#error Implementation not specified. Valid implementations are "COARSE", "FINE".
-#endif
+//void* test_2_threads_simple_thread_1(void* ptr) {
+    //BinarySearchTree* bst = reinterpret_cast<BinarySearchTree*>(ptr);
+    //for (int i = 0; i < 100; ++i) {
+        //bst->insert(i); 
+    //}
+//}
 
-#define N 20
-
-void print_array(int* a, int n) {
-    std::cout << "[";
-    for (int i = 0; i < n - 1; ++i) {
-        std::cout << a[i] << ", ";
-    }
-    if (n > 0)
-        std::cout << a[n - 1];
-    std::cout << "]\n";
-}
+//bool test_2_threads_simple() {
+    //std::shared_ptr<BinarySearchTree> bst = std::make_shared<BST>(); 
+    
+//}
 
 int main(int argc, char** argv) {
-    srand(42);
 
-    BinarySearchTree* bst = new BST();
+    test_single_add();
+    test_single_add_remove();
+    test_bad_remove();
 
-    for (int i = 0; i < N; ++i) {
-        int x = rand() % 50;
-        std::cout << "Inserting " << x << ".\n";
-        bst->insert(x);
-    }
-
-    int size;
-    int* inorder = bst->in_order_traversal(&size);
-
-    print_array(inorder, size);
-
-    delete inorder;
-    delete bst;
-
+    test_1_threads();
+    test_2_threads();
+    test_4_threads();
+    test_8_threads();
+    test_16_threads();
+    
     return 0;
 }
