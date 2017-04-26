@@ -119,8 +119,7 @@ ease of access.
 
 ## Schedule
 
-~~1. **Mon April 17th (11:59 pm):** Proposal for first idea for final project.~~
-
+1. ~~**Mon April 17th (11:59 pm):** Proposal for first idea for final project.~~
 1. **Tue April 25th (11:59 pm):** Project checkpoint report due. By this point,
    we should have a completed test harness as well as coarse grained
    implementation of binary search trees completed.
