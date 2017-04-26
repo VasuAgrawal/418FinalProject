@@ -18,6 +18,7 @@ void BST::free_node(node* current_node) {
 
 BST::~BST() {
     free_node(root);
+    pthread_mutex_destroy(&bst_lock);
 }
 
 bool BST::insert_node(
@@ -58,13 +59,69 @@ void BST::insert(int x) {
     pthread_mutex_unlock(&bst_lock);
 }
 
+int BST::num_children(node* n) {
+    int x = 0;
+    if (n->left != nullptr) ++x;
+    if (n->right != nullptr) ++x;
+    return x;
+}
+
+//@REQUIRES: n != nullptr
+int BST::find_min(node* n) {
+    if (n->left == nullptr)
+        return n->value;
+    return find_min(n->left);
+}
+
+bool BST::remove_node(node* current_node, node* parent, direction d, int val) {
+    if (current_node == nullptr)
+        return false;
+
+    if (val == current_node->value) {
+        node* new_node;
+        int new_val;
+        switch (num_children(current_node)) {
+            case 0:
+                if (parent != nullptr && d == LEFT)
+                    parent->left = nullptr;
+                else if (parent != nullptr && d == RIGHT)
+                    parent->right = nullptr;
+                else
+                    root = nullptr;
+                break;
+            case 1:
+                new_node = (current_node->left == nullptr ?
+                                current_node->right : current_node->left);
+                if (parent != nullptr && d == LEFT)
+                    parent->left = new_node;
+                else if (parent != nullptr && d == RIGHT)
+                    parent->right = new_node;
+                else
+                    root = nullptr;
+                break;
+            case 2:
+                new_val = find_min(current_node->right);
+                current_node->value = new_val;
+                remove_node(current_node->right, current_node, RIGHT, new_val);
+                break;
+        }
+        --size;
+        delete current_node;
+        return true;
+    } else if (val < current_node->value) {
+        return remove_node(current_node->left, current_node, LEFT, val);
+    } else {
+        return remove_node(current_node->right, current_node, RIGHT, val);
+    }
+}
+
 bool BST::remove(int x) {
     pthread_mutex_lock(&bst_lock);
 
-    //TODO
+    bool result = remove_node(root, nullptr, LEFT, x);
 
     pthread_mutex_unlock(&bst_lock);
-    return false;
+    return result;
 }
 
 bool BST::search_node(node* current_node, int val) {
