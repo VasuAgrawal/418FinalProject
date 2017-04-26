@@ -6,7 +6,7 @@
 1. ~~**Tue April 25th (11:59 pm):** Project checkpoint report due. By this point,
    we should have a completed test harness (Vasu) as well as a coarse-grained
    implementation of binary search trees completed (Lukas).~~
-1. **Fri April 28 (11:49 pm):** Fine-grained locking implementation completed (Vasu).
+1. **Fri April 28 (11:59 pm):** Fine-grained locking implementation completed (Vasu).
 1. **Tue May 2nd (11:59 pm):** Lock-free implementation started (Lukas). Test
    harness upgraded to include full multithreading and load simulation support
    (Vasu).
@@ -29,6 +29,38 @@ test suite with the coarse grained reference solution should make the
 implementations of the other two implementations simpler and faster to develop.
 
 ## Goals and Deliverables
+
+Based on our progress this past week, we believe we will have an adequate amount
+of time to complete the main stated deliverables (comparison of coarse-grained,
+fine-grained, and lock-free BSTs), but will have little to no time left to work
+on any of the additional goals we had mentioned. This is largely based on the
+amount of time it took to develop the multithreading capabilities of the testing
+harness. Our experiences, as described below, raise potential concerns about the
+consistency of our measurements, so we would prefer to spend additional time
+ensuring that the analysis that we do make is accurate, rather than spending
+minimal time generating a simple set of results for the analysis and then
+beginning work on "nice-to-haves". Below, we've reiterated our planned goals for
+the pararallelism competition.
+
+> The first major deliverable for the project is the completion of 3 different
+> implementations of concurrent binary search trees. They are:
+
+> 1. Coarse-grained locking tree
+> 1. Fine-grained locking tree
+> 1. Lock-free tree
+
+> The novel part of our project, however, is the evaluation and comparison of the
+> performance characteristics of the three different tree structures that we will
+> develop. Specifically, we intend to evaluate the performance under the following
+> load conditions, varying the number of threads and the amount of contention.
+
+> 1. Read-only workload
+> 1. Insert-only workload
+> 1. Delete-heavy workload
+
+For the parallelism competition, we plan on showing graphs describing our
+performance results across these different workloads. We additionally want to
+present some analysis about why we believe the results to be as they are.
 
 ## Concerns
 
