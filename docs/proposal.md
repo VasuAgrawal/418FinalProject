@@ -1,4 +1,4 @@
-This is our proposal
+# Project Proposal
 
 ## Summary
 
@@ -128,4 +128,9 @@ ease of access.
 
 ## Authors
 
-Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and [Lukas Peraza](https://github.com/LBPeraza).
+Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and
+[Lukas Peraza](https://github.com/LBPeraza).
+
+## Links
+
+- [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
