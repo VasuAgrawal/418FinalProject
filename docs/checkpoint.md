@@ -1,5 +1,13 @@
 # Project Checkpoint
 
+## Schedule
+
+## Summary of Work
+
+## Goals and Deliverables
+
+## Concerns
+
 ## Authors
 
 Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and
