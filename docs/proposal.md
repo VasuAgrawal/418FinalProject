@@ -120,11 +120,18 @@ ease of access.
 ## Schedule
 
 ~~1. **Mon April 17th (11:59 pm):** Proposal for first idea for final project.~~
-1. **Tue April 25th (11:59 pm):** Project checkpoint report due. 
-1. **Tue May 2nd (11:59 pm):**
-1. **Wed May 10th (9:00 am):** Project pages made available.
+
+1. **Tue April 25th (11:59 pm):** Project checkpoint report due. By this point,
+   we should have a completed test harness as well as coarse grained
+   implementation of binary search trees completed.
+1. **Tue May 2nd (11:59 pm):** Fine grained locking implementation completed.
+   Additionally, the test harness has been upgraded to have proper
+   multithreading and load simulation support.
+1. **Wed May 10th (9:00 am):** Project pages made available. Lock-free
+   implementation completed.
 1. **Thu May 11th (3:00 pm):** Finalists announced, presentation time sign ups.
 1. **Fri May 12th (11:59 pm):** Final report due, parallelism competition.
+   Analysis and report completed.
 
 ## Authors
 
