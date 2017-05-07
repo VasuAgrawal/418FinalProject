@@ -9,6 +9,18 @@ bool test_single_add() {
     EXIT_TEST;
 }
 
+bool test_triple_add() {
+    INIT_TEST;
+    std::unique_ptr<BinarySearchTree> bst = std::make_unique<BST>();
+    bst->insert(1);
+    bst->insert(0);
+    bst->insert(2);
+    EXPECT(bst->contains(1));
+    EXPECT(bst->contains(0));
+    EXPECT(bst->contains(2));
+    EXIT_TEST;
+}
+
 
 bool test_single_add_remove() {
     INIT_TEST;

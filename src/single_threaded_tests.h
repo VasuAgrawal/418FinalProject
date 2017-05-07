@@ -15,6 +15,7 @@
 #endif
 
 bool test_single_add();
+bool test_triple_add();
 bool test_single_add_remove();
 bool test_bad_remove();
 

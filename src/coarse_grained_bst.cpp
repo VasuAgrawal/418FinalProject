@@ -6,6 +6,13 @@ BST::BST() : root(nullptr) {
     pthread_mutex_init(&bst_lock, nullptr);
 }
 
+
+BST::~BST() {
+    free_node(root);
+    pthread_mutex_destroy(&bst_lock);
+}
+
+
 void BST::free_node(node* current_node) {
     if (current_node == nullptr)
         return;
@@ -14,10 +21,6 @@ void BST::free_node(node* current_node) {
     delete current_node;
 }
 
-BST::~BST() {
-    free_node(root);
-    pthread_mutex_destroy(&bst_lock);
-}
 
 bool BST::insert_node(
         node* current_node, int val, node* new_node) {
@@ -38,6 +41,7 @@ bool BST::insert_node(
     }
     return false;
 }
+
 
 void BST::insert(int x) {
     pthread_mutex_lock(&bst_lock);

@@ -3,6 +3,8 @@
 
 #include "bst.h"
 
+#include <memory>
+
 class BST : public BinarySearchTree {
 public:
     void insert(int x);
@@ -10,17 +12,24 @@ public:
     bool contains(int x);
     int* in_order_traversal(int* size);
 
-    FineGrainedBST();
+    BST();
+    ~BST();
+
+    BST(const BST&) = delete;
+    BST& operator=(const BST&) = delete;
 
 private:
-    struct node {
+    struct Node {
         pthread_mutex_t lock;
         int value;
-        node* left;
-        node* right;
+        std::unique_ptr<Node> left;
+        std::unique_ptr<Node> right;
+
+        Node(int value);
     };
 
-    node* root;
+    std::unique_ptr<Node> root;
+    pthread_mutex_t lock;
 };
 
 #endif
