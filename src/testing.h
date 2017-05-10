@@ -19,7 +19,8 @@
 
 #define EXIT_TEST \
         if (passed) { \
-            std::cout << "Test " << __func__ << " passed!" << std::endl; \
+            std::cout << "Test " << __func__ << ANSI_COLOR_GREEN << " PASSED!" \
+                      << ANSI_COLOR_RESET << std::endl; \
         } else { \
             std::cout << "Test " << __func__ << ANSI_COLOR_RED << " FAILED!" \
                       << ANSI_COLOR_RESET << std::endl; \

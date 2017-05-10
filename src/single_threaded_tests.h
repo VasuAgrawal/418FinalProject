@@ -19,5 +19,11 @@ bool test_triple_add();
 bool test_single_add_remove();
 bool test_bad_remove();
 bool test_repeated_add();
+bool test_nonexistent_remove();
+bool test_leaf_remove();
+bool test_single_child_remove();
+bool test_double_child_remove();
+bool test_single_child_remove_root();
+bool test_double_child_remove_root();
 
 #endif
