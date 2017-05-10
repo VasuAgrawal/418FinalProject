@@ -15,7 +15,7 @@ void* test_n_threads_fn(void* info) {
 
 
 bool test_n_threads(size_t n) {
-    INIT_TEST;
+    bool passed = true;
     std::vector<pthread_t> threads;
     std::vector<ThreadInfo> thread_info;
 
@@ -36,8 +36,8 @@ bool test_n_threads(size_t n) {
     for (int i = 0; i < kTestNThreadsCount; ++i) {
         EXPECT(bst->contains(i));
     }
-            
-    EXIT_TEST;
+           
+    return passed;
 }
 
 bool test_1_threads()  { INIT_TEST; EXPECT(test_n_threads(1));  EXIT_TEST; }
