@@ -44,16 +44,16 @@ the pararallelism competition.
 
 > The first major deliverable for the project is the completion of 3 different
 > implementations of concurrent binary search trees. They are:
-
+>
 > 1. Coarse-grained locking tree
 > 1. Fine-grained locking tree
 > 1. Lock-free tree
-
+>
 > The novel part of our project, however, is the evaluation and comparison of the
 > performance characteristics of the three different tree structures that we will
 > develop. Specifically, we intend to evaluate the performance under the following
 > load conditions, varying the number of threads and the amount of contention.
-
+>
 > 1. Read-only workload
 > 1. Insert-only workload
 > 1. Delete-heavy workload
