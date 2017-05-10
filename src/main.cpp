@@ -2,18 +2,6 @@
 #include "multi_threaded_tests.h"
 
 
-//void* test_2_threads_simple_thread_1(void* ptr) {
-    //BinarySearchTree* bst = reinterpret_cast<BinarySearchTree*>(ptr);
-    //for (int i = 0; i < 100; ++i) {
-        //bst->insert(i); 
-    //}
-//}
-
-//bool test_2_threads_simple() {
-    //std::shared_ptr<BinarySearchTree> bst = std::make_shared<BST>(); 
-    
-//}
-
 int main(int argc, char** argv) {
     (void)argc;
     (void)argv;

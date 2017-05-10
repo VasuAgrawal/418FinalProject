@@ -17,7 +17,6 @@ bool BST::insert(int value) {
 
     if (root == nullptr) { // Add first element to the list
         root = std::make_unique<Node>(value);
-        //std::cout << "Adding " << value << " to tree as root!" << std::endl;
         pthread_mutex_unlock(&lock);
         return true;
     }
@@ -33,7 +32,6 @@ bool BST::insert(int value) {
             if (curr->left == nullptr) {
                 curr->left = std::make_unique<Node>(value);
                 pthread_mutex_unlock(&curr->lock);
-                //std::cout << "Successfully added " << value << " to tree!" << std::endl;
                 return true;
             } else { // A node exists on the left, so "recursively" add from there
                 next = curr->left.get();
@@ -42,13 +40,11 @@ bool BST::insert(int value) {
             if (curr->right == nullptr) {
                 curr->right = std::make_unique<Node>(value);
                 pthread_mutex_unlock(&curr->lock);
-                //std::cout << "Successfully added " << value << " to tree!" << std::endl;
                 return true;
             } else {
                 next = curr->right.get();
             }
         } else {
-            //std::cout << "Value " << value << " is already in the tree!" << std::endl;
             pthread_mutex_unlock(&curr->lock);
             return false;
         }
@@ -61,8 +57,6 @@ bool BST::insert(int value) {
 
 
 bool BST::contains(int value) {
-    //std::cout << "Contains called with " << value << std::endl;
-
     // Always lock the bst object first, before doing anything to it.
     pthread_mutex_lock(&lock);
     if (root == nullptr) {
@@ -79,7 +73,6 @@ bool BST::contains(int value) {
     // We're sure that the root exists, so we can start searching from it.
     while (true) {
         if (value == curr->value) {
-            //std::cout << "Value " << value << "found!" << std::endl;
             pthread_mutex_unlock(&curr->lock);
             return true;
         } else if (value < curr->value) {
@@ -103,9 +96,6 @@ bool BST::contains(int value) {
         pthread_mutex_unlock(&curr->lock);
         curr = next;
     }
-
-    // Uhhh ....
-    return false;
 }
 
 
