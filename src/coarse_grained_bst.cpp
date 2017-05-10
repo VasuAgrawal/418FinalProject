@@ -43,7 +43,7 @@ bool BST::insert_node(
 }
 
 
-void BST::insert(int x) {
+bool BST::insert(int x) {
     pthread_mutex_lock(&bst_lock);
 
     node* new_node = new node;
@@ -51,14 +51,18 @@ void BST::insert(int x) {
     new_node->left = nullptr;
     new_node->right = nullptr;
 
+    bool ret = false;
+
     if (root == nullptr) {
         root = new_node;
         ++size;
-    } else if (insert_node(root, x, new_node)) {
+        ret = true;
+    } else if ((ret = insert_node(root, x, new_node))) {
         ++size;
     }
 
     pthread_mutex_unlock(&bst_lock);
+    return ret;
 }
 
 int BST::num_children(node* n) {

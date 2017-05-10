@@ -7,10 +7,9 @@
 
 class BST : public BinarySearchTree {
 public:
-    void insert(int x);
+    bool insert(int x);
     bool remove(int x);
     bool contains(int x);
-    int* in_order_traversal(int* size);
 
     BST();
     ~BST();
@@ -30,6 +29,8 @@ private:
 
     std::unique_ptr<Node> root;
     pthread_mutex_t lock;
+
+    void insert_from_node(Node* current, int value);
 };
 
 #endif

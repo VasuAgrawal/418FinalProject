@@ -40,8 +40,8 @@ bool test_n_threads(size_t n) {
     EXIT_TEST;
 }
 
-bool test_1_threads() { return test_n_threads(1); }
-bool test_2_threads() { return test_n_threads(2); }
-bool test_4_threads() { return test_n_threads(4); }
-bool test_8_threads() { return test_n_threads(8); }
-bool test_16_threads() { return test_n_threads(16); }
+bool test_1_threads()  { INIT_TEST; EXPECT(test_n_threads(1));  EXIT_TEST; }
+bool test_2_threads()  { INIT_TEST; EXPECT(test_n_threads(2));  EXIT_TEST; }
+bool test_4_threads()  { INIT_TEST; EXPECT(test_n_threads(4));  EXIT_TEST; }
+bool test_8_threads()  { INIT_TEST; EXPECT(test_n_threads(8));  EXIT_TEST; }
+bool test_16_threads() { INIT_TEST; EXPECT(test_n_threads(16)); EXIT_TEST; }
