@@ -47,9 +47,9 @@ substantially more difficult and is beyond our scope to design from scratch.
 Rather, we intend to explore one of the approches outlined in these papers, in
 descending order of interest:
 
-1. [http://dl.acm.org/citation.cfm?id=2555256]()
-1. [http://dl.acm.org/citation.cfm?id=2611500]()
-1. [http://dl.acm.org/citation.cfm?id=2312036]()
+1. [http://dl.acm.org/citation.cfm?id=2555256](http://dl.acm.org/citation.cfm?id=2555256)
+1. [http://dl.acm.org/citation.cfm?id=2611500](http://dl.acm.org/citation.cfm?id=2611500)
+1. [http://dl.acm.org/citation.cfm?id=2312036](http://dl.acm.org/citation.cfm?id=2312036)
 
 For development, we intend to work on our personal computers to avoid expected
 contention for resources on the GHC machines. However, for the final performance
