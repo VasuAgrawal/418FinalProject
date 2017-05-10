@@ -4,6 +4,7 @@
 #include "bst.h"
 
 #include <memory>
+#include "utils.h"
 
 class BST : public BinarySearchTree {
 public:

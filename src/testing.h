@@ -2,6 +2,7 @@
 #define TESTING_H_
 
 #include <iostream>
+#include "utils.h"
 
 // http://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
 #define ANSI_COLOR_RED     "\x1b[31m"
