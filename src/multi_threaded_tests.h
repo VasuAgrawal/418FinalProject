@@ -10,8 +10,10 @@
 #include "coarse_grained_bst.h"
 #elif FINE
 #include "fine_grained_bst.h"
+#elif LOCKFREE
+#include "lock_free_bst.h"
 #else
-#error Implementation not specified. Valid implementations are "COARSE".
+#error Implementation not specified. Valid implementations are "COARSE", "FINE", "LOCKFREE".
 #endif
 
 struct ThreadInfo {
