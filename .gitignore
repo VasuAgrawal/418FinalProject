@@ -3,3 +3,5 @@ logs/
 
 *.swp
 bin/
+
+sftp-config.json

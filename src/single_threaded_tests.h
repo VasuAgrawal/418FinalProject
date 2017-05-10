@@ -25,5 +25,8 @@ bool test_single_child_remove();
 bool test_double_child_remove();
 bool test_single_child_remove_root();
 bool test_double_child_remove_root();
+#ifdef COARSE
+bool test_in_order_traversal();
+#endif
 
 #endif
