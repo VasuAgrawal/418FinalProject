@@ -17,12 +17,14 @@ int main(int argc, char** argv) {
     test_double_child_remove();
     test_single_child_remove_root();
     test_double_child_remove_root();
+    test_double_child_remove_root_deep();
+    test_deep_root_remove_all();
 
-    test_1_threads();
-    test_2_threads();
-    test_4_threads();
-    test_8_threads();
-    test_16_threads();
+    //test_1_threads();
+    //test_2_threads();
+    //test_4_threads();
+    //test_8_threads();
+    //test_16_threads();
     
     return 0;
 }

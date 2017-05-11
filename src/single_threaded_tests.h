@@ -25,5 +25,6 @@ bool test_single_child_remove();
 bool test_double_child_remove();
 bool test_single_child_remove_root();
 bool test_double_child_remove_root();
+bool test_double_child_remove_root_deep();
 
 #endif

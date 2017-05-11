@@ -160,3 +160,30 @@ bool test_double_child_remove_root() {
     EXPECT(bst->contains(2));
     EXIT_TEST;
 }
+
+
+// Make the min of the nodes on the right go a few levels down.
+bool test_double_child_remove_root_deep() {
+    INIT_TEST;
+    std::unique_ptr<BinarySearchTree> bst = std::make_unique<BST>();
+    EXPECT(bst->insert(0));
+    EXPECT(bst->insert(-1));
+    EXPECT(bst->insert(10));
+    EXPECT(bst->insert(20));
+    EXPECT(bst->insert(5));
+    EXPECT(bst->insert(8));
+
+    EXPECT(bst->remove(0));
+    
+    EXPECT_NOT(bst->contains(0));
+    EXPECT(bst->contains(-1));
+    EXPECT(bst->contains(10));
+    EXPECT(bst->contains(20));
+    EXPECT(bst->contains(5));
+    EXPECT(bst->contains(8));
+
+
+
+    EXIT_TEST;
+
+}
