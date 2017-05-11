@@ -10,10 +10,13 @@
 #include "coarse_grained_bst.h"
 #elif FINE
 #include "fine_grained_bst.h"
+#elif FINE_RW
+#include "fine_grained_rw_bst.h"
 #elif LOCKFREE
 #include "lock_free_bst.h"
 #else
-#error Implementation not specified. Valid implementations are "COARSE", "FINE", "LOCKFREE".
+#error Implementation not specified. Valid implementations are "COARSE", \
+    "FINE", "FINE_RW", "LOCKFREE".
 #endif
 
 #define HERE std::cout << "Got to line " << __LINE__ << std::endl

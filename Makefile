@@ -3,7 +3,7 @@ CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -pthread -O3
 BUILDDIR=bin
 TEST_SRCS=src/single_threaded_tests.cpp src/multi_threaded_tests.cpp src/main.cpp
 
-all: directory coarse fine lockfree
+all: directory coarse fine fine_rw lockfree
 
 directory:
 	mkdir -p $(BUILDDIR)
@@ -17,6 +17,12 @@ coarse:
 FINE_FILES = src/fine_grained_bst.cpp
 fine:
 	$(CC) $(CXXFLAGS) -o $@ $(FINE_FILES) $(TEST_SRCS) -D FINE
+	mv $@ $(BUILDDIR)
+
+
+RW_FILES = src/fine_grained_rw_bst.cpp
+fine_rw:
+	$(CC) $(CXXFLAGS) -o $@ $(RW_FILES) $(TEST_SRCS) -D FINE_RW
 	mv $@ $(BUILDDIR)
 
 

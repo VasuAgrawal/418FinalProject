@@ -101,6 +101,7 @@ bool test_bad_remove() {
 bool test_repeated_add() {
     INIT_TEST;
     std::unique_ptr<BinarySearchTree> bst = std::make_unique<BST>();
+    
     EXPECT_NOT(bst->contains(1));
     EXPECT(bst->insert(1));
     EXPECT(bst->contains(1));
