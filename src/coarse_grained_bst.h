@@ -1,6 +1,8 @@
 #ifndef COARSE_GRAINED_BST_H_
 #define COARSE_GRAINED_BST_H_
 
+#include <vector>
+
 #include "bst.h"
 
 class BST : public BinarySearchTree {
@@ -8,7 +10,7 @@ public:
     bool insert(int x);
     bool remove(int x);
     bool contains(int x);
-    int* in_order_traversal(int* size);
+    std::vector<int> in_order_traversal();
 
     BST();
     ~BST();
@@ -35,7 +37,7 @@ private:
     static void free_node(node* current_node);
     static bool insert_node(node* current_node, int val, node* new_node);
     static bool search_node(node* current_node, int val);
-    static int fill_inorder(node* current_node, int* out, int i);
+    static void fill_inorder(node* current_node, std::vector<int>* in_order);
 };
 
 #endif

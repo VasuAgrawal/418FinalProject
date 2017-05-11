@@ -1,5 +1,40 @@
 #include "single_threaded_tests.h"
 
+#include <vector>
+#include <unordered_set>
+#include <algorithm>
+
+namespace SingleThreaded {
+
+
+void test_all() {
+    test_single_add();
+    test_triple_add();
+    test_single_add_remove();
+    test_bad_remove();
+    test_repeated_add();
+    test_nonexistent_remove();
+    test_leaf_remove();
+    test_single_child_remove();
+    test_double_child_remove();
+    test_single_child_remove_root();
+    test_double_child_remove_root();
+    test_double_child_remove_root_deep();
+
+#ifdef COARSE
+    test_in_order_traversal();
+#endif 
+}
+
+
+void print_vector(std::vector<int> v) {
+    std::cout << "\n<";
+    for (auto const& value : v) {
+        std::cout << value << ", ";
+    }
+    std::cout << ">\n";
+}
+
 
 // Add a single value, and check that it was added.
 bool test_single_add() {
@@ -183,7 +218,37 @@ bool test_double_child_remove_root_deep() {
     EXPECT(bst->contains(8));
 
 
-
     EXIT_TEST;
-
 }
+
+
+#ifdef COARSE
+bool test_in_order_traversal() {
+    INIT_TEST;
+    std::unique_ptr<BST> bst = std::make_unique<BST>();
+    std::vector<int> values;
+    std::unordered_set<int> all_values;
+    srand(0);
+    for(int i = 0; i < 20; ++i) {
+        int x = rand() % 50;
+        if (all_values.find(x) == all_values.end())
+            values.push_back(x);
+        all_values.insert(x);
+        bst->insert(x);
+    }
+    std::sort(values.begin(), values.end());
+    std::vector<int> in_order = bst->in_order_traversal();
+    if (values.size() == in_order.size()) {
+        for (size_t i = 0; i < values.size(); ++i) {
+            EXPECT(values[i] == in_order[i]);
+        }
+    } else {
+        print_vector(values);
+        print_vector(in_order);
+        EXPECT(false);
+    }
+    EXIT_TEST;
+}
+#endif
+
+} // namespace SingleThreaded

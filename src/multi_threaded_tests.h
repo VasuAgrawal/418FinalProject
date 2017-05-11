@@ -10,9 +10,15 @@
 #include "coarse_grained_bst.h"
 #elif FINE
 #include "fine_grained_bst.h"
+#elif LOCKFREE
+#include "lock_free_bst.h"
 #else
-#error Implementation not specified. Valid implementations are "COARSE".
+#error Implementation not specified. Valid implementations are "COARSE", "FINE", "LOCKFREE".
 #endif
+
+namespace MultiThreaded {
+
+void test_all();
 
 struct ThreadInfo {
     size_t tid;
@@ -29,6 +35,8 @@ bool test_1_threads();
 bool test_2_threads();
 bool test_4_threads();
 bool test_8_threads();
-bool test_16_threads();
+bool test_16_threads(); 
+
+} // namespace MultiThreaded
 
 #endif

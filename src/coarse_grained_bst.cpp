@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <stack>
 
 #include "coarse_grained_bst.h"
 
@@ -88,12 +90,14 @@ bool BST::remove_node(node* current_node, node* parent, direction d, int val) {
         int new_val;
         switch (num_children(current_node)) {
             case 0:
-                if (parent != nullptr && d == LEFT)
+                if (parent != nullptr && d == LEFT) {
                     parent->left = nullptr;
-                else if (parent != nullptr && d == RIGHT)
+                } else if (parent != nullptr && d == RIGHT) {
                     parent->right = nullptr;
+                }
                 else
                     root = nullptr;
+                delete current_node;
                 break;
             case 1:
                 new_node = (current_node->left == nullptr ?
@@ -103,16 +107,16 @@ bool BST::remove_node(node* current_node, node* parent, direction d, int val) {
                 else if (parent != nullptr && d == RIGHT)
                     parent->right = new_node;
                 else
-                    root = nullptr;
+                    root = new_node;
+                delete current_node;
                 break;
             case 2:
                 new_val = find_min(current_node->right);
-                current_node->value = new_val;
                 remove_node(current_node->right, current_node, RIGHT, new_val);
+                current_node->value = new_val;
                 break;
         }
         --size;
-        delete current_node;
         return true;
     } else if (val < current_node->value) {
         return remove_node(current_node->left, current_node, LEFT, val);
@@ -131,14 +135,15 @@ bool BST::remove(int x) {
 }
 
 bool BST::search_node(node* current_node, int val) {
-    if (current_node == nullptr)
+    if (current_node == nullptr) {
         return false;
-    else if (val == current_node->value)
+    } else if (val == current_node->value) {
         return true;
-    else if (val < current_node->value)
+    } else if (val < current_node->value) {
         return search_node(current_node->left, val);
-    else
+    } else {
         return search_node(current_node->right, val);
+    }
 }
 
 bool BST::contains(int x) {
@@ -150,21 +155,21 @@ bool BST::contains(int x) {
     return result;
 }
 
-int BST::fill_inorder(node* current_node, int* out, int i) {
+void BST::fill_inorder(node* current_node, std::vector<int>* in_order) {
     if (current_node == nullptr)
-        return i;
-    i = fill_inorder(current_node->left, out, i);
-    out[i] = current_node->value;
-    return fill_inorder(current_node->right, out, ++i);
+        return;
+    fill_inorder(current_node->left, in_order);
+    in_order->push_back(current_node->value);
+    fill_inorder(current_node->right, in_order);
 }
 
-int* BST::in_order_traversal(int* size) {
+std::vector<int> BST::in_order_traversal() {
     pthread_mutex_lock(&bst_lock);
 
-    int* out = new int[this->size];
-    fill_inorder(root, out, 0);
+    std::vector<int> out;
+    fill_inorder(root, &out);
 
     pthread_mutex_unlock(&bst_lock);
-    *size = this->size;
+
     return out;
 }

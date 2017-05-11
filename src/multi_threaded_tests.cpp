@@ -2,6 +2,16 @@
 
 #include <vector>
 
+namespace MultiThreaded {
+
+void test_all() {
+    test_1_threads();
+    test_2_threads();
+    test_4_threads();
+    test_8_threads();
+    test_16_threads();
+}
+
 static int const kTestNThreadsCount = 10000;
 void* test_n_threads_fn(void* info) {
     ThreadInfo* ti = reinterpret_cast<ThreadInfo*>(info);
@@ -45,3 +55,5 @@ bool test_2_threads()  { INIT_TEST; EXPECT(test_n_threads(2));  EXIT_TEST; }
 bool test_4_threads()  { INIT_TEST; EXPECT(test_n_threads(4));  EXIT_TEST; }
 bool test_8_threads()  { INIT_TEST; EXPECT(test_n_threads(8));  EXIT_TEST; }
 bool test_16_threads() { INIT_TEST; EXPECT(test_n_threads(16)); EXIT_TEST; }
+
+} // namespace MultiThreaded
