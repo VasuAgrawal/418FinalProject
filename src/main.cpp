@@ -17,6 +17,13 @@
 int main(int argc, char** argv) {
     (void)argc;
     (void)argv;
+    
+#ifdef COARSE
+    test_in_order_traversal();
+#elif LOCKFREE
+    test_in_order_traversal();
+    test_seek();
+#endif
 
     test_single_add();
     test_triple_add();
@@ -29,10 +36,6 @@ int main(int argc, char** argv) {
     test_double_child_remove();
     test_single_child_remove_root();
     test_double_child_remove_root();
-    
-#ifdef COARSE
-    test_in_order_traversal();
-#endif
 
     test_1_threads();
     test_2_threads();

@@ -30,5 +30,9 @@ bool test_double_child_remove_root();
 #ifdef COARSE
 bool test_in_order_traversal();
 #endif
+#ifdef LOCKFREE
+bool test_seek();
+bool test_in_order_traversal();
+#endif
 
 #endif
