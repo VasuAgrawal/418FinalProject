@@ -102,7 +102,7 @@ void* test_n_threads_large_fn(void* info) {
     std::uniform_int_distribution<int> dist(0, nPerThread - 1);
     std::uniform_int_distribution<int> insRemove(0, 1);
 
-    for (int x = 0; x < operCount / ti->thread_count; ++x) {
+    for (size_t x = 0; x < operCount / ti->thread_count; ++x) {
         bool ins = insRemove(ti->gen) == 1;
         int i = dist(ti->gen);
         int v = (ti->choices)[i];
