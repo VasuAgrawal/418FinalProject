@@ -1,3 +1,4 @@
+#include "CycleTimer.h"
 #include "multi_threaded_tests.h"
 
 #include <vector>
@@ -79,8 +80,8 @@ bool contains(std::vector<int> v, int x) {
     return std::find(v.begin(), v.end(), x) != v.end();
 }
 
-static int const kLarge = 1 << 20;
-static int const operCount = 1 << 15;
+static int const kLarge = 1 << 23;
+static int const operCount = 1 << 20;
 void init_choices(std::vector<int>* choices, size_t thread_id, size_t nThreads, 
                   size_t nPerThread, float contention) {
     size_t chunkSize = (size_t) (nPerThread - (nPerThread - 1) * contention);
@@ -101,7 +102,7 @@ void* test_n_threads_large_fn(void* info) {
     std::uniform_int_distribution<int> dist(0, nPerThread - 1);
     std::uniform_int_distribution<int> insRemove(0, 1);
 
-    for (int x = 0; x < operCount; ++x) {
+    for (int x = 0; x < operCount / ti->thread_count; ++x) {
         bool ins = insRemove(ti->gen) == 1;
         int i = dist(ti->gen);
         int v = (ti->choices)[i];
@@ -119,8 +120,9 @@ void* test_n_threads_large_fn(void* info) {
 bool test_n_threads_large(size_t n, float contention) {
     bool passed = true;
     contention = std::min(1.0f, std::max(0.0f, contention));
-    std::cout << "\tWith contention: " << ANSI_COLOR_CYAN << contention <<
-        ANSI_COLOR_RESET << "\n";
+    if (VERBOSE)
+        std::cout << "\tWith contention: " << ANSI_COLOR_CYAN << contention <<
+            ANSI_COLOR_RESET << "\n";
 
     std::vector<std::default_random_engine> generators;
     std::vector<std::vector<int>> choices;
@@ -143,6 +145,8 @@ bool test_n_threads_large(size_t n, float contention) {
             choices[i], &contains);
     }
 
+    double start_time = CycleTimer::currentSeconds();
+
     for (size_t i = 0; i < threads.size(); ++i) {
         pthread_create(&threads[i], nullptr, test_n_threads_large_fn, &thread_info[i]);
     }
@@ -150,6 +154,12 @@ bool test_n_threads_large(size_t n, float contention) {
     for (auto& t : threads) {
         pthread_join(t, nullptr);
     }
+
+    double end_time = CycleTimer::currentSeconds();
+
+    std::cout << n << " threads; contention: " << contention << std::endl <<
+        "\t" << (end_time - start_time)*1000 << " ms\n";
+
 
     for (size_t i = 0; i < contains.size(); ++i) {
         for (size_t j = 0; j < contains[i].size(); ++j) {

@@ -13,20 +13,23 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
+#define VERBOSE 0
+
 // Super simple testing framework!
 #define INIT_TEST \
-        std::cout << "Starting test " << __func__ << "!" << std::endl; \
+        if (VERBOSE) \
+          std::cout << "Starting test " << __func__ << "!" << std::endl; \
         bool passed = true;
 
 #define EXIT_TEST \
-        if (passed) { \
+        if (passed && VERBOSE) { \
             std::cout << "Test " << __func__ << ANSI_COLOR_GREEN << " PASSED!" \
                       << ANSI_COLOR_RESET << std::endl; \
-        } else { \
+        } else if (!passed) { \
             std::cout << "Test " << __func__ << ANSI_COLOR_RED << " FAILED!" \
                       << ANSI_COLOR_RESET << std::endl; \
         } \
-        std::cout << std::endl; \
+        if (VERBOSE) std::cout << std::endl; \
         return passed;
 
 #define EXPECT(x) passed &= expect((x), __LINE__)
