@@ -16,7 +16,7 @@
 #error Implementation not specified. Valid implementations are "COARSE", "FINE", "LOCKFREE".
 #endif
 
-
+#define HERE std::cout << "Got to line " << __LINE__ << std::endl
 
 namespace SingleThreaded {
 
@@ -39,6 +39,10 @@ bool test_middle_remove_deep();
 
 #ifdef COARSE
 bool test_in_order_traversal();
+#elif LOCKFREE
+bool test_seek();
+bool test_in_order_traversal();
+bool test_cmp_vals();
 #endif 
 
 } // namespace SingleThreaded
