@@ -16,6 +16,12 @@
 #error Implementation not specified. Valid implementations are "COARSE", "FINE", "LOCKFREE".
 #endif
 
+
+
+namespace SingleThreaded {
+
+void test_all();
+
 bool test_single_add();
 bool test_triple_add();
 bool test_single_add_remove();
@@ -27,12 +33,17 @@ bool test_single_child_remove();
 bool test_double_child_remove();
 bool test_single_child_remove_root();
 bool test_double_child_remove_root();
+bool test_double_child_remove_root_deep();
+bool test_root_remove_deep();
+bool test_middle_remove_deep();
+
 #ifdef COARSE
 bool test_in_order_traversal();
-#endif
-#ifdef LOCKFREE
+#elif LOCKFREE
 bool test_seek();
 bool test_in_order_traversal();
-#endif
+#endif 
+
+} // namespace SingleThreaded
 
 #endif
