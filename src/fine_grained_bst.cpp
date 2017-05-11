@@ -157,74 +157,77 @@ bool BST::remove(int value) {
         }
     }
 
-    //// We only ever reach this point if we're deleting something that's not the
-    //// root, or we're deleting the root and it has two children (aka changing
-    //// the root value).
+    // At this point, we're sure the root isn't the one being deleted. There is
+    // still a lock on the root and the object, but since the root certainly
+    // isn't going to be modified the lock on the object isn't necessary
+    // anymore.
+    pthread_mutex_unlock(&lock);
+
+    // Now we go through the tree and do the same thing we were doing earlier,
+    // except with hopefully less special cases.
+    Node* curr = root.get();
+    Node* parent = nullptr;
+    Node* next = nullptr;
+
+    while (true) {
+        if (value < curr->value) {
+            if (curr->left == nullptr) { // The value doesn't exist
+                return false;
+            } else {
+                next = curr->left.get();
+            }
+        } else if (value > curr->value) {
+            if (curr->right == nullptr) { // The value doesn't exist
+                return false;
+            } else {
+                next = curr->right.get();
+            }
+        } else { // value == curr->value (remove curr).
+            if (curr->left == nullptr && curr->right == nullptr) {
+                // No children
+                if (curr == parent->left.get()) {
+                    parent->left = nullptr;
+                } else {
+                    parent->right = nullptr;
+                }
+
+                if (parent) {
+                    pthread_mutex_unlock(&parent->lock);
+                }
+                return true;
+            } else if (curr->left == nullptr || curr->right == nullptr) {
+                // One child
+                if (curr == parent->left.get()) {
+                    parent->left = std::move(curr->left == nullptr ? curr->right : curr->left);
+                } else {
+                    parent->right = std::move(curr->left == nullptr ? curr->right : curr->left);
+                }
     
-    //Node* curr = root.get();
-    //Node* parent = nullptr;
-    //Node* next = nullptr;
+                if (parent) {
+                    pthread_mutex_unlock(&parent->lock);
+                }
+                return true;
+            } else {
+                // Two children
+                pthread_mutex_unlock(&curr->lock);
+                if (parent) {
+                    pthread_mutex_unlock(&parent->lock);
+                }
+                return false;
+            }
+        }
+
+        if (parent) {
+            pthread_mutex_unlock(&parent->lock);
+        }
+        parent = curr;
+        curr = next;
+    }
 
 
-    
-
-
-        //// Both of the children are valid, so we have to figure out which node
-        //// is to become the new root.
-        //pthread_mutex_unlock(&root->lock);
-        //pthread_mutex_unlock(&lock);
-        //return false;
-    //}
-       
     std::cout << "Not removing root, returning." << std::endl;
     pthread_mutex_unlock(&root->lock);
-    pthread_mutex_unlock(&lock);
     return false;
-
-    //Node* curr = root.get();
-    //Node* parent = nullptr;
-    //Node* next = nullptr;
-
-    //while (true) {
-        //if (value == curr->value) { // Found element to delete
-            //std::cout << "Found element " << value << ", deleting in theory" <<
-                //std::endl;
-            //pthread_mutex_unlock(&curr->lock);
-            //if (parent) {
-                //pthread_mutex_unlock(&parent->lock);
-            //}
-            //return false;
-        //} else if (value < curr->value) {
-            //if (curr->left == nullptr) { 
-                //// Value should be here but isn't, so release currently held
-                //// locks and return.
-                //pthread_mutex_unlock(&curr->lock);
-                //if (parent) {
-                    //pthread_mutex_unlock(&parent->lock);
-                //}
-                //std::cout << "Unable to delete element " << value << std::endl;
-                //return false;
-            //} else {
-                //next = curr->left.get();
-            //}
-        //} else { // value > curr->value
-            //if (curr->right == nullptr) {
-                //pthread_mutex_unlock(&curr->lock);
-                //if (parent) {
-                    //pthread_mutex_unlock(&parent->lock);
-                //}
-                //std::cout << "Unable to delete element " << value << std::endl;
-                //return false;
-            //} else {
-                //next = curr->right.get();
-            //}
-        //}
-
-        //pthread_mutex_lock(&next->lock);
-        //pthread_mutex_unlock(&parent->lock);
-        //parent = curr;
-        //curr = next;
-    //}
 }
 
 

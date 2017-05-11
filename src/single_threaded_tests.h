@@ -34,6 +34,8 @@ bool test_double_child_remove();
 bool test_single_child_remove_root();
 bool test_double_child_remove_root();
 bool test_double_child_remove_root_deep();
+bool test_root_remove_deep();
+bool test_middle_remove_deep();
 
 #ifdef COARSE
 bool test_in_order_traversal();

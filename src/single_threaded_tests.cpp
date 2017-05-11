@@ -20,6 +20,8 @@ void test_all() {
     test_single_child_remove_root();
     test_double_child_remove_root();
     test_double_child_remove_root_deep();
+    test_root_remove_deep();
+    test_middle_remove_deep();
 
 #ifdef COARSE
     test_in_order_traversal();
@@ -27,7 +29,7 @@ void test_all() {
 }
 
 
-void print_vector(std::vector<int> v) {
+static void print_vector(std::vector<int> v) {
     std::cout << "\n<";
     for (auto const& value : v) {
         std::cout << value << ", ";
@@ -218,6 +220,53 @@ bool test_double_child_remove_root_deep() {
     EXPECT(bst->contains(8));
 
 
+    EXIT_TEST;
+}
+
+static bool ordered_helper(std::vector<int> insert, std::vector<int> remove) {
+    bool passed = true;
+    std::unique_ptr<BinarySearchTree> bst = std::make_unique<BST>();
+    for (const int elem : insert) {
+        EXPECT(bst->insert(elem));
+    }
+    
+    std::vector<int> removed;
+    for (const int elem : remove) {
+        EXPECT(bst->remove(elem));
+
+        insert.erase(std::find(insert.begin(), insert.end(), elem));
+        removed.push_back(elem);
+
+        for (const int removed_elem : removed) {
+            EXPECT_NOT(bst->contains(removed_elem));
+        }
+
+        for (const int inserted : insert) {
+            EXPECT(bst->contains(inserted));
+        }
+    }
+    return passed;
+}
+
+
+// Add a bunch of items and then remove them all, one by one. Each element will
+// be the root when removed.
+bool test_root_remove_deep() {
+    INIT_TEST;
+    std::vector<int> insert_order = {0, -1, 10, 20, 5, 8};
+    std::vector<int> remove_order = {0, 5, 8, 10, 20, -1};
+    EXPECT(ordered_helper(insert_order, remove_order));
+    EXIT_TEST;
+}
+
+
+// Add a bunch of single child items, remove them from the middle rather than
+// from the root.
+bool test_middle_remove_deep() {
+    INIT_TEST;
+    std::vector<int> insert_order = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::vector<int> remove_order = {2, 3, 4, 5, 6, 7, 8, 9, 1};
+    EXPECT(ordered_helper(insert_order, remove_order));
     EXIT_TEST;
 }
 
