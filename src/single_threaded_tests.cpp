@@ -8,6 +8,13 @@ namespace SingleThreaded {
 
 
 void test_all() {
+
+#ifdef LOCKFREE
+    test_in_order_traversal();
+    test_seek();
+    test_cmp_vals();
+#endif
+
     test_single_add();
     test_triple_add();
     test_single_add_remove();
@@ -25,11 +32,6 @@ void test_all() {
 
 #ifdef COARSE
     test_in_order_traversal();
-#endif
-
-#ifdef LOCKFREE
-    test_in_order_traversal();
-    test_seek();
 #endif
 }
 
@@ -328,6 +330,26 @@ bool test_seek() {
 
     EXIT_TEST;
 }
+
+bool test_cmp_vals() {
+    INIT_TEST;
+    EXPECT(BST::val_leq(false, 100, true, 0));
+    EXPECT(BST::val_leq(false, 0, false, 3));
+    EXPECT_NOT(BST::val_leq(false, 3, false, 2));
+    EXPECT_NOT(BST::val_leq(true, 42, false, 0));
+    EXPECT_NOT(BST::val_leq(true, 0, false, 42));
+    EXPECT(BST::val_leq(true, 0, true, 0));
+    EXPECT(BST::val_leq(true, 0, true, 2));
+    EXPECT_NOT(BST::val_leq(true, 2, true, 0));
+    EXPECT(BST::val_leq(false, 1, true, 0));
+    EXPECT(BST::val_leq(false, 1, true, 1));
+    EXPECT(BST::val_leq(false, 1, true, 2));
+    EXPECT_NOT(BST::val_leq(true, 0, false, 1));
+    EXPECT_NOT(BST::val_leq(true, 1, false, 1));
+    EXPECT_NOT(BST::val_leq(true, 2, false, 1));
+    EXIT_TEST;
+}
+
 #endif
 
 } // namespace SingleThreaded

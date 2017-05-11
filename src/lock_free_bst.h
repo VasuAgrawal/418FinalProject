@@ -14,17 +14,22 @@
 #define PACK_LEFT(p,c) PACK_CHILD(p,c,left)
 #define PACK_RIGHT(p,c) PACK_CHILD(p,c,right)
 
-#define PACK_NODE(address,src,dst) (PTR(LNG(address) | 2*src | dst))
-#define UNPACK_NODE(nodeptr) (PTR(LNG(nodeptr) & (~3)))
-#define UNPACK_LEFT(nodeptr) (UNPACK_NODE(nodeptr)->left)
-#define UNPACK_RIGHT(nodeptr) (UNPACK_NODE(nodeptr)->right)
+#define GET_ADDR(nodeptr) (PTR(LNG(nodeptr) & (~(TAG_BIT | FLAG_BIT))))
+#define GET_LEFT(nodeptr) (GET_ADDR(nodeptr)->left)
+#define GET_RIGHT(nodeptr) (GET_ADDR(nodeptr)->right)
 
-#define GET_TAG(nodeptr) (BL(LNG(nodeptr) & 1))
-#define GET_FLAG(nodeptr) (BL((LNG(nodeptr) >> 1) & 1))
-#define TAG(nodeptr) (nodeptr = PTR(LNG(nodeptr) | 1))
-#define FLAG(nodeptr) (nodeptr = PTR(LNG(nodeptr) | 2))
-#define UNTAG(nodeptr) (nodeptr = PTR(LNG(nodeptr) & (~1)))
-#define UNFLAG(nodeptr) (nodeptr = PTR(LNG(nodeptr) & (~2)))
+#define GET_TAG(nodeptr) (BL(LNG(nodeptr) & TAG_BIT))
+#define GET_FLAG(nodeptr) (BL(LNG(nodeptr) & FLAG_BIT))
+#define TAGGED(nodeptr) (PTR(LNG(nodeptr) | TAG_BIT))
+#define FLAGGED(nodeptr) (PTR(LNG(nodeptr) | FLAG_BIT))
+#define UNTAGGED(nodeptr) (PTR(LNG(nodeptr) & (~TAG_BIT)))
+#define UNFLAGGED(nodeptr) (PTR(LNG(nodeptr) & (~FLAG_BIT)))
+
+#define TAG(x) ((x) = TAGGED(x));
+#define FLAG(x) ((x) = FLAGGED(x));
+
+#define TAG_BIT 1
+#define FLAG_BIT 2
 
 class BST : public BinarySearchTree {
 public:
@@ -41,6 +46,7 @@ public:
 
     int make_seek_test_bst(int* expected_vals);
     void do_seek_test(int x, int* got_vals);
+    static bool val_leq(bool infx, int x, bool infy, int y);
 
 private:
     struct val {
@@ -50,10 +56,16 @@ private:
         val (bool inf, int value) : inf(inf), value(value) {}
 
         bool operator<(const val& rhs) {
-            return (rhs.inf && !inf) || (value < rhs.value);
+            if (rhs.inf && !inf) return true;
+            else if (inf && !rhs.inf) return false;
+            else return (value < rhs.value);
+            // return (rhs.inf && !inf) || (value < rhs.value);
         }
         bool operator==(const val& rhs) {
             return inf == rhs.inf && value == rhs.value;
+        }
+        bool operator!=(const val& rhs) {
+            return !(*this == rhs);
         }
     };
 
@@ -77,9 +89,9 @@ private:
     node* root;
 
     seek_record seek(val value);
-    void cleanup(val value, seek_record record);
-    
-    static void free_node(node* node);
+    bool cleanup(val value, seek_record record);
+
+    // static void free_node(node* node);
 };
 
 #endif

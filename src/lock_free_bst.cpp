@@ -5,8 +5,6 @@
 
 #include "lock_free_bst.h"
 
-#define HERE std::cout << "Got to line " << __LINE__ << std::endl
-
 BST::BST() {
     val inf0(true, 0);
     val inf1(true, 1);
@@ -22,18 +20,15 @@ BST::BST() {
 }
 
 BST::~BST() {
-    free_node(root);
-}
-
-void BST::free_node(node* current_node) {
     std::queue<node*> nodes;
-    nodes.push(current_node);
+    nodes.push(GET_ADDR(root));
+    node* current_node;
     while (!nodes.empty()) {
         current_node = nodes.front(); nodes.pop();
         if (current_node == nullptr) continue;
-        nodes.push(UNPACK_NODE(current_node->left));
-        nodes.push(UNPACK_NODE(current_node->right));
-        delete current_node;
+        nodes.push(GET_LEFT(current_node));
+        nodes.push(GET_RIGHT(current_node));
+        delete GET_ADDR(current_node);
     }
 }
 
@@ -44,11 +39,11 @@ BST::seek_record BST::seek(val value) {
     node* S = root;
     record.successor = S;
     record.parent = S;
-    record.leaf = UNPACK_NODE(UNPACK_LEFT(S));
+    record.leaf = GET_ADDR(GET_LEFT(S));
 
     node* parentField = record.parent;
     node* currentField = record.leaf;
-    node* current = UNPACK_NODE(currentField);
+    node* current = GET_ADDR(currentField);
 
     while (current != nullptr) {
         if (!GET_TAG(parentField)) {
@@ -60,17 +55,16 @@ BST::seek_record BST::seek(val value) {
 
         parentField = currentField;
         if (value < current->value) {
-            currentField = UNPACK_LEFT(current);
+            currentField = GET_LEFT(current);
         } else {
-            currentField = UNPACK_RIGHT(current);
+            currentField = GET_RIGHT(current);
         }
-        current = UNPACK_NODE(currentField);
+        current = GET_ADDR(currentField);
     }
     return record;
 }
 
 bool BST::insert(int x) {
-    // std::cout << "Inserting: " << x << std::endl;
     val v(x);
     seek_record record;
     while (true) {
@@ -99,13 +93,17 @@ bool BST::insert(int x) {
             }
 
             if (__sync_bool_compare_and_swap(child_addr, leaf, new_internal)) {
-                // std::cout << "  Inserted new_internal: " << new_internal->value.value <<
-                //            "\n               new_leaf: " << new_leaf->value.value << "\n";
                 return true;
             } else {
                 // TODO: cleanup
                 delete new_leaf;
                 delete new_internal;
+
+                node* addr = GET_ADDR(child_addr);
+                if (addr == leaf &&
+                    (GET_TAG(child_addr) || GET_FLAG(child_addr))) {
+                    cleanup(v, record);
+                }
             }
         }
     }
@@ -113,7 +111,32 @@ bool BST::insert(int x) {
 
 bool BST::remove(int x) {
     val v(x);
-    return false;
+    bool injecting = true;
+    node* leaf = nullptr;
+    while (true) {
+        seek_record record = seek(v);
+        node* parent = record.parent;
+        node** child_addr;
+        if (v < parent->value) {
+            child_addr = &(parent->left);
+        } else {
+            child_addr = &(parent->right);
+        }
+        if (injecting) {
+            leaf = record.leaf;
+            if (leaf->value != v)
+                return false;
+            if (__sync_bool_compare_and_swap(child_addr,
+                GET_ADDR(leaf), FLAGGED(UNTAGGED(leaf)))) {
+                injecting = false;
+                if (cleanup(v, record))
+                    return true;
+            }
+        } else if (record.leaf != leaf || cleanup(v, record)) {
+            return true;
+        }
+    }
+
 }
 
 bool BST::contains(int x) {
@@ -129,7 +152,7 @@ std::vector<int> BST::in_order_traversal() {
     node* current_node;
     while(!nodes.empty()) {
         current_node = nodes.top(); nodes.pop();
-        if (UNPACK_NODE(current_node->left) == nullptr) {
+        if (GET_ADDR(current_node->left) == nullptr) {
             if (!current_node->value.inf)
                 out.push_back(current_node->value.value);
         } else {
@@ -140,7 +163,39 @@ std::vector<int> BST::in_order_traversal() {
     return out;
 }
 
-void BST::cleanup(val value, seek_record record) {}
+bool BST::cleanup(val value, seek_record record) {
+    node* ancestor = record.ancestor;
+    node* successor = record.successor;
+    node* parent = record.parent;
+
+    node** successor_addr;
+    node** sibling_addr;
+    node** child_addr;
+
+    if (value < ancestor->value) {
+        successor_addr = &(GET_LEFT(ancestor));
+    } else {
+        successor_addr = &(GET_RIGHT(ancestor));
+    }
+
+    if (value < parent->value) {
+        child_addr = &(parent->left);
+        sibling_addr = &(parent->right);
+    } else {
+        child_addr = &(parent->right);
+        sibling_addr = &(parent->left);
+    }
+
+    if (!GET_FLAG(*child_addr))
+        sibling_addr = child_addr;
+
+    (void) __sync_fetch_and_or(sibling_addr, TAG_BIT);
+
+    bool result = __sync_bool_compare_and_swap(successor_addr,
+        GET_ADDR(successor), UNTAGGED(*sibling_addr));
+
+    return result;
+}
 
 void BST::do_seek_test(int x, int* got_vals) {
     val v(x);
@@ -189,8 +244,8 @@ int BST::make_seek_test_bst(int* expected_vals) {
     FLAG(nE->left);
     TAG(nE->right);
 
-    node* S = UNPACK_LEFT(root);
-    node* sent = UNPACK_LEFT(S);
+    node* S = GET_LEFT(root);
+    node* sent = GET_LEFT(S);
     PACK_LEFT(sent, nA);
 
     expected_vals[0] = B.value;
@@ -199,4 +254,10 @@ int BST::make_seek_test_bst(int* expected_vals) {
     expected_vals[3] = G.value;
 
     return G.value;
+}
+
+bool BST::val_leq(bool infx, int x, bool infy, int y) {
+    val vx(infx, x);
+    val vy(infy, y);
+    return (vx < vy) || (vx == vy);
 }
