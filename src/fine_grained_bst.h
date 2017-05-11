@@ -31,7 +31,7 @@ private:
     std::unique_ptr<Node> root;
     pthread_mutex_t lock;
 
-    void insert_from_node(Node* current, int value);
+    bool remove_root();
 };
 
 #endif

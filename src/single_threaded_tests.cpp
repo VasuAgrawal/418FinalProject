@@ -211,7 +211,7 @@ bool test_double_child_remove_root_deep() {
     EXPECT(bst->insert(8));
 
     EXPECT(bst->remove(0));
-    
+
     EXPECT_NOT(bst->contains(0));
     EXPECT(bst->contains(-1));
     EXPECT(bst->contains(10));
