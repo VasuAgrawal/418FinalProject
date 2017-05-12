@@ -14,21 +14,16 @@ void test_all() {
     test_8_threads();
     test_16_threads();
 
-    test_1_threads_large(0.0f);
-    test_1_threads_large(0.5f);
-    test_1_threads_large(1.0f);
-    test_2_threads_large(0.0f);
-    test_2_threads_large(0.5f);
-    test_2_threads_large(1.0f);
-    test_4_threads_large(0.0f);
-    test_4_threads_large(0.5f);
-    test_4_threads_large(1.0f);
-    test_8_threads_large(0.0f);
-    test_8_threads_large(0.5f);
-    test_8_threads_large(1.0f);
-    test_16_threads_large(0.0f);
-    test_16_threads_large(0.5f);
-    test_16_threads_large(1.0f);
+    std::cout << "Threads,Contention,Time (ms)" << std::endl;
+    for (int threads = 1; threads <= 32; ++threads) {
+        for (float contention = 0; contention <= 1; contention += 1.0 / 16) {
+            [threads, contention]() -> bool {
+              INIT_TEST;
+              test_n_threads_large(threads, contention);
+              EXIT_TEST;
+            }();
+        }
+    }
 }
 
 static int const kTestNThreadsCount = 10000;
@@ -157,9 +152,12 @@ bool test_n_threads_large(size_t n, float contention) {
 
     double end_time = CycleTimer::currentSeconds();
 
-    std::cout << n << " threads; contention: " << contention << std::endl <<
-        "\t" << (end_time - start_time)*1000 << " ms\n";
+    //std::cout << n << " threads; contention: " << contention << std::endl <<
+        //"\t" << (end_time - start_time)*1000 << " ms\n";
 
+    // CSV mode
+    std::cout << n << "," << contention << "," << 
+      (end_time - start_time) * 1000 << std::endl;
 
     for (size_t i = 0; i < contains.size(); ++i) {
         for (size_t j = 0; j < contains[i].size(); ++j) {
