@@ -49,8 +49,8 @@
             var chart = new google.visualization.LineChart(document.getElementById(name + "_div"));
             chart.draw(dataTable, options);
           })
-          .fail(function() {
-            console.log("error");
+          .fail(function(x, err) {
+            console.log("error: ", err);
           });
       }
 
@@ -68,20 +68,7 @@
         });
         return newData;
       }
-
-      function loadData(csvName) {
-        $.ajax(csvName, {
-          datatype: "text",
-          mimeType: "text/plain"
-        })
-          .done(function(data) {
-            drawChart(processData(data));
-          })
-          .fail(function() {
-            console.log("error");
-          });
-      }
-
+      
       function main() {
         drawChart('coarse', 'Coarse-Grained Locking');
         drawChart('fine', 'Fine-Grained Locking');
@@ -95,7 +82,7 @@
     <div id="coarse_div" style="width:1500px; height:900px"></div>
     <div id="fine_div" style="width:1500px; height:900px"></div>
     <div id="fine-rw_div" style="width:1500px; height:900px"></div>
-    <div id="lockfree_div" style="width:1500px; height:900px"></div>
-    <div id="high-cont_div" style="width:1500px; height:900px"></div>
+    {# <div id="lockfree_div" style="width:1500px; height:900px"></div> #}
+    {# <div id="high-cont_div" style="width:1500px; height:900px"></div> #}
   </body>
 </html>

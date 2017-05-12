@@ -13,12 +13,18 @@ def process(fname):
             if nThreads not in timings:
                 timings[nThreads] = dict()
             timings[nThreads][contention] = ms
+    print(timings)
 
     newname = fname[:-4] + '-proc.csv'
     with open(newname, 'w', newline='') as newcsvfile:
         writer = csv.writer(newcsvfile, delimiter=',')
-        row = ['Thread Count'] + sorted(timings[1])
+        row = ['Thread Count'] + [x+(0 if x == 0 else .00001) for x in sorted(timings[1])]
         writer.writerow(row)
         for tnum in sorted(timings):
             row = [timings[tnum][cont] for cont in sorted(timings[tnum])]
             writer.writerow([tnum] + row)
+
+process('coarse.csv')
+process('fine.csv')
+process('fine-rw.csv')
+process('lockfree.csv')
