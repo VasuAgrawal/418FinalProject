@@ -1,29 +1,40 @@
 # Final Writeup
 
-<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="makeGraph.js"></script>
+
+<div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
+<div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
+<div class="graph" id="fine-rw_chart" csv="fine-rw-proc" title="Write-Intensive, Fine-Grained RW Locking"></div>
+<div class="graph" id="lockfree_chart" csv="lockfree-proc" title="Write-Intensive, Lock-Free"></div>
+
+<div class="graph" id="coarse-read_chart" csv="coarse-read-proc" title="Read-Only, Coarse-Grained Locking"></div>
+<div class="graph" id="fine-read_chart" csv="fine-read-proc" title="Read-Only, Fine-Grained Locking"></div>
+<div class="graph" id="fine-rw-read_chart" csv="fine-rw-read-proc" title="Read-Only, Fine-Grained RW Locking"></div>
+<div class="graph" id="lockfree-read_chart" csv="lockfree-read-proc" title="Read-Only, Lock-Free"></div>
+
+<div class="graph" id="lockfree-spdup_chart" csv="lockfree-proc-spdup"
+     title="Write-Intensive Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+<div class="graph" id="lockfree-read-spdup_chart" csv="lockfree-read-proc-spdup"
+     title="Read-Only Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+
 <script type="text/javascript">
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawChart);
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(function() {
 
-  function drawChart() {
-    var data = google.visualization.arrayToDataTable([
-      ["Thread Count", "Coarse-grained", "Fine-grained", "Fine-grained RW", "Lock-free"],
-      [1, 632.849, 935.024, 1250.48, 912.562],
-      [2, 1171.92, 817.272, 1069.36, 637.198],
-      [4, 1508.99, 2241.2, 3141.6, 335.997],
-      [8, 1691.21, 3087.83, 168.594],
-      [16, 2266.03, 3147.46, 146.451]
-    ]);
+    $('.graph').each(function () {
+        var $this = $(this);
+        $this.css({
+            width : '100%',
+            height : '400px'
+        });
+        var xTitle = $this.attr('x-title');
+        xTitle = xTitle ? xTitle : 'Threads';
+        var yTitle = $this.attr('y-title');
+        yTitle = yTitle ? yTitle : 'Execution time (ms)';
+        makeGraph($this.attr('csv'), $this.attr('title'), xTitle, yTitle, this.id);
+    });
 
-    var options = {
-      title: 'Performance Under High Contention'
-    };
-
-    var chart = new google.visualization.ColumnChart(document.getElementById('high_contention_chart'));
-
-    chart.draw(data, options);
-  }
+});
 </script>
-
-<div id="high_contention_chart" style="width: 900px; height: 500px"></div>
-
