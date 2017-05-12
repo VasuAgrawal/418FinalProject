@@ -140,3 +140,4 @@ Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and
 ## Links
 
 - [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
+- [Final Writeup](https://vasuagrawal.github.io/418FinalProject/final-writeup)

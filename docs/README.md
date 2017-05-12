@@ -1,1 +1,1 @@
-checkpoint.md
+final-writeup.md

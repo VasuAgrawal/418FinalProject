@@ -91,3 +91,4 @@ Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and
 ## Links
 
 - [Project Proposal](https://vasuagrawal.github.io/418FinalProject/proposal)
+- [Final Writeup](https://vasuagrawal.github.io/418FinalProject/final-writeup)
