@@ -7,24 +7,23 @@
 
   function drawChart() {
     var data = google.visualization.arrayToDataTable([
-      ['Year', 'Sales', 'Expenses'],
-      ['2004',  1000,      400],
-      ['2005',  1170,      460],
-      ['2006',  660,       1120],
-      ['2007',  1030,      540]
+      ["Thread Count", "Coarse-grained", "Lock-free"],
+      [1, 632.849, 912.562],
+      [2, 1171.92, 637.198],
+      [4, 1508.99, 335.997],
+      [8, 1691.21, 168.594],
+      [16, 2266.03, 146.451]
     ]);
 
     var options = {
-      title: 'Company Performance',
-      curveType: 'function',
-      legend: { position: 'bottom' }
+      title: 'Performance Under High Contention'
     };
 
-    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+    var chart = new google.visualization.ColumentChart(document.getElementById('high_contention_chart'));
 
     chart.draw(data, options);
   }
 </script>
 
-<div id="curve_chart" style="width: 900px; height: 500px"></div>
+<div id="high_contention_chart" style="width: 900px; height: 500px"></div>
 
