@@ -1,6 +1,3 @@
-Starting single threaded tests...
-Done!
-Starting multi threaded tests...
 Threads,Contention,Time (ms)
 1,0,493.878
 1,0.0625,862.39
@@ -546,4 +543,3 @@ Threads,Contention,Time (ms)
 32,0.875,744.22
 32,0.9375,730.392
 32,1,1922.78
-Done!

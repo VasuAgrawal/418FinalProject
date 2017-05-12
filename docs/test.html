@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src=https://code.jquery.com/jquery-3.2.1.min.js></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(main);
+
+      // function drawChart() {
+      //   var data = google.visualization.arrayToDataTable([
+      //     ['Year', 'Sales', 'Expenses'],
+      //     ['2004',  1000,      400],
+      //     ['2005',  1170,      460],
+      //     ['2006',  660,       1120],
+      //     ['2007',  1030,      540]
+      //   ]);
+
+      //   var options = {
+      //     title: 'Company Performance',
+      //     curveType: 'function',
+      //     legend: { position: 'bottom' }
+      //   };
+
+      //   // var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+      //   // chart.draw(data, options);
+      // }
+
+      function drawChart(name, graphTitle) {
+
+        $.ajax("data/" + name + "-proc.csv", {
+          datatype: "text",
+          mimeType: "text/plain"
+        })
+          .done(function(data) {
+            var dataTable = google.visualization.arrayToDataTable(processData(data));
+            var options = {
+              title: graphTitle + ' Performance',
+              pointSize: 5,
+              hAxis: {
+                title: 'Threads'
+              },
+              vAxis: {
+                title: 'Execution Time (ms)'
+              }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById(name + "_div"));
+            chart.draw(dataTable, options);
+          })
+          .fail(function() {
+            console.log("error");
+          });
+      }
+
+      function processData(data) {
+        var lines = data.split("\n");
+        var newData = lines.map(function(x, i) {
+          var info = x.split(",");
+          if (i == 0) {
+            return info;
+          }
+
+          return [parseInt(info[0])].concat(
+            info.slice(1).map(parseFloat));
+
+        });
+        return newData;
+      }
+
+      function loadData(csvName) {
+        $.ajax(csvName, {
+          datatype: "text",
+          mimeType: "text/plain"
+        })
+          .done(function(data) {
+            drawChart(processData(data));
+          })
+          .fail(function() {
+            console.log("error");
+          });
+      }
+
+      function main() {
+        drawChart('coarse', 'Coarse-Grained Locking');
+        drawChart('fine', 'Fine-Grained Locking');
+        drawChart('fine-rw', 'Fine-Grained RW Locking');
+        drawChart('lockfree', 'Lock Free');
+        drawChart('high-cont', 'High Contention')
+      }
+    </script>
+  </head>
+  <body>
+    <div id="coarse_div" style="width:1500px; height:900px"></div>
+    <div id="fine_div" style="width:1500px; height:900px"></div>
+    <div id="fine-rw_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont_div" style="width:1500px; height:900px"></div>
+  </body>
+</html>
