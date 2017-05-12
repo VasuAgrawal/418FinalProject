@@ -1,0 +1,7 @@
+Thread count,0% Contention,25% Contention,50% Contention,75% Contention,100% Contention
+1,1.00x,1.00x,1.00x,1.00x,1.00x
+2,1.59x,1.73x,1.63x,1.93x,1.40x
+4,2.84x,2.91x,3.43x,3.24x,2.30x
+8,6.13x,6.23x,7.45x,6.81x,3.58x
+16,7.87x,8.51x,11.41x,11.01x,4.73x
+32,6.14x,11.03x,16.53x,15.51x,5.47x

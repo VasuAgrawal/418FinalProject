@@ -8,9 +8,9 @@
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(main);
 
-      function drawChart(name, graphTitle) {
+      function drawChart(name, graphTitle, hAxisTitle, vAxisTitle) {
 
-        $.ajax("data/" + name + "-proc.csv", {
+        $.ajax("data/" + name + ".csv", {
           datatype: "text",
           mimeType: "text/plain"
         })
@@ -20,10 +20,10 @@
               title: graphTitle,
               pointSize: 5,
               hAxis: {
-                title: 'Threads'
+                title: hAxisTitle
               },
               vAxis: {
-                title: 'Execution Time (ms)'
+                title: vAxisTitle
               }
             };
             var chart = new google.visualization.LineChart(document.getElementById(name + "_div"));
@@ -50,39 +50,45 @@
       }
 
       function main() {
-        drawChart('coarse', 'Write-Intensive, Coarse-Grained Locking');
-        drawChart('fine', 'Write-Intensive, Fine-Grained Locking');
-        drawChart('fine-rw', 'Write-Intensive, Fine-Grained RW Locking');
-        drawChart('lockfree', 'Write-Intensive, Lock Free');
+        drawChart('coarse-proc', 'Write-Intensive, Coarse-Grained Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('fine-proc', 'Write-Intensive, Fine-Grained Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('fine-rw-proc', 'Write-Intensive, Fine-Grained RW Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('lockfree-proc', 'Write-Intensive, Lock Free', 'Threads', 'Execution Time (ms)');
 
-        drawChart('coarse-read', 'Read-Only, Coarse-Grained Locking');
-        drawChart('fine-read', 'Read-Only, Fine-Grained Locking');
-        drawChart('fine-rw-read', 'Read-Only, Fine-Grained RW Locking');
-        drawChart('lockfree-read', 'Read-Only, Lock Free');
+        drawChart('coarse-read-proc', 'Read-Only, Coarse-Grained Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('fine-read-proc', 'Read-Only, Fine-Grained Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('fine-rw-read-proc', 'Read-Only, Fine-Grained RW Locking', 'Threads', 'Execution Time (ms)');
+        drawChart('lockfree-read-proc', 'Read-Only, Lock Free', 'Threads', 'Execution Time (ms)');
 
-        drawChart('low-cont', 'Write-Intensive Performance Under Low Contention');
-        drawChart('high-cont', 'Write-Intensive Performance Under High Contention');
+        drawChart('low-cont-proc', 'Write-Intensive Performance Under Low Contention', 'Threads', 'Execution Time (ms)');
+        drawChart('high-cont-proc', 'Write-Intensive Performance Under High Contention', 'Threads', 'Execution Time (ms)');
 
-        drawChart('low-cont-read', 'Read-Only Performance Under Low Contention');
-        drawChart('high-cont-read', 'Read-Only Performance Under High Contention');
+        drawChart('low-cont-read-proc', 'Read-Only Performance Under Low Contention', 'Threads', 'Execution Time (ms)');
+        drawChart('high-cont-read-proc', 'Read-Only Performance Under High Contention', 'Threads', 'Execution Time (ms)');
+
+        drawChart('lockfree-proc-spdup', 'Lock-Free Write-Intensive Speedup', 'Threads', 'Speedup (vs. 1 thread)');
+        drawChart('lockfree-read-proc-spdup', 'Lock-Free Read-Only Speedup', 'Threads', 'Speedup (vs. 1 thread)');
       }
     </script>
   </head>
   <body>
-    <div id="coarse_div" style="width:1500px; height:900px"></div>
-    <div id="fine_div" style="width:1500px; height:900px"></div>
-    <div id="fine-rw_div" style="width:1500px; height:900px"></div>
-    <div id="lockfree_div" style="width:1500px; height:900px"></div>
+    <div id="coarse-proc_div" style="width:1500px; height:900px"></div>
+    <div id="fine-proc_div" style="width:1500px; height:900px"></div>
+    <div id="fine-rw-proc_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree-proc_div" style="width:1500px; height:900px"></div>
     
-    <div id="coarse-read_div" style="width:1500px; height:900px"></div>
-    <div id="fine-read_div" style="width:1500px; height:900px"></div>
-    <div id="fine-rw-read_div" style="width:1500px; height:900px"></div>
-    <div id="lockfree-read_div" style="width:1500px; height:900px"></div>
+    <div id="coarse-read-proc_div" style="width:1500px; height:900px"></div>
+    <div id="fine-read-proc_div" style="width:1500px; height:900px"></div>
+    <div id="fine-rw-read-proc_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree-read-proc_div" style="width:1500px; height:900px"></div>
 
-    <div id="low-cont_div" style="width:1500px; height:900px"></div>
-    <div id="high-cont_div" style="width:1500px; height:900px"></div>
+    <div id="low-cont-proc_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont-proc_div" style="width:1500px; height:900px"></div>
 
-    <div id="low-cont-read_div" style="width:1500px; height:900px"></div>
-    <div id="high-cont-read_div" style="width:1500px; height:900px"></div>
+    <div id="low-cont-read-proc_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont-read-proc_div" style="width:1500px; height:900px"></div>
+
+    <div id="lockfree-proc-spdup_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree-read-proc-spdup_div" style="width:1500px; height:900px"></div>
   </body>
 </html>

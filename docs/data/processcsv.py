@@ -23,13 +23,28 @@ def process(fname):
             row = [timings[tnum][cont] for cont in sorted(timings[tnum])]
             writer.writerow([tnum] + row)
 
-process('coarse.csv')
-process('fine.csv')
-process('fine-rw.csv')
-process('lockfree.csv')
+def processSpeedup(fname):
+    timings = dict()
+    with open(fname, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            if row[0][0] == 'T':
+                continue
+            nThreads = int(row[0])
+            timings[nThreads] = dict()
+            for i, t in enumerate(row[1:]):
+                timings[nThreads][25 * i] = float(t)
 
+    newname = fname[:-4] + '-spdup.csv'
 
-process('coarse-read.csv')
-process('fine-read.csv')
-process('fine-rw-read.csv')
-process('lockfree-read.csv')
+    with open(newname, 'w', newline='') as newcsvfile:
+        writer = csv.writer(newcsvfile, delimiter=',')
+        row = ['Thread count'] + ["%d%% Contention"%i for i in range(0, 101, 25)]
+        writer.writerow(row)
+        for tnum in sorted(timings):
+            row = ['%0.2fx'%(timings[1][cont]/timings[tnum][cont]) for cont in sorted(timings[tnum])]
+            writer.writerow([tnum] + row)
+
+processSpeedup('lockfree-proc.csv')
+processSpeedup('lockfree-read-proc.csv')
+
