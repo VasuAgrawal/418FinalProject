@@ -37,7 +37,7 @@
           .done(function(data) {
             var dataTable = google.visualization.arrayToDataTable(processData(data));
             var options = {
-              title: graphTitle + ' Performance',
+              title: graphTitle,
               pointSize: 5,
               hAxis: {
                 title: 'Threads'
@@ -68,13 +68,23 @@
         });
         return newData;
       }
-      
+
       function main() {
-        drawChart('coarse', 'Coarse-Grained Locking');
-        drawChart('fine', 'Fine-Grained Locking');
-        drawChart('fine-rw', 'Fine-Grained RW Locking');
-        drawChart('lockfree', 'Lock Free');
-        drawChart('high-cont', 'High Contention')
+        drawChart('coarse', 'Write-Intensive, Coarse-Grained Locking');
+        drawChart('fine', 'Write-Intensive, Fine-Grained Locking');
+        drawChart('fine-rw', 'Write-Intensive, Fine-Grained RW Locking');
+        drawChart('lockfree', 'Write-Intensive, Lock Free');
+
+        drawChart('coarse-read', 'Read-Intensive, Coarse-Grained Locking');
+        drawChart('fine-read', 'Read-Intensive, Fine-Grained Locking');
+        drawChart('fine-rw-read', 'Read-Intensive, Fine-Grained RW Locking');
+        drawChart('lockfree-read', 'Read-Intensive, Lock Free');
+
+        drawChart('low-cont', 'Write-Intensive Performance Under Low Contention');
+        drawChart('high-cont', 'Write-Intensive Performance Under High Contention');
+
+        drawChart('low-cont-read', 'Read-Intensive Performance Under Low Contention');
+        drawChart('high-cont-read', 'Read-Intensive Performance Under High Contention');
       }
     </script>
   </head>
@@ -82,7 +92,17 @@
     <div id="coarse_div" style="width:1500px; height:900px"></div>
     <div id="fine_div" style="width:1500px; height:900px"></div>
     <div id="fine-rw_div" style="width:1500px; height:900px"></div>
-    {# <div id="lockfree_div" style="width:1500px; height:900px"></div> #}
-    {# <div id="high-cont_div" style="width:1500px; height:900px"></div> #}
+    <div id="lockfree_div" style="width:1500px; height:900px"></div>
+    
+    <div id="coarse-read_div" style="width:1500px; height:900px"></div>
+    <div id="fine-read_div" style="width:1500px; height:900px"></div>
+    <div id="fine-rw-read_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree-read_div" style="width:1500px; height:900px"></div>
+
+    <div id="low-cont_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont_div" style="width:1500px; height:900px"></div>
+
+    <div id="low-cont-read_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont-read_div" style="width:1500px; height:900px"></div>
   </body>
 </html>
