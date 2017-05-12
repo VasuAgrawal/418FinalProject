@@ -1,5 +1,5 @@
 CC=g++
-CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -pthread -O3
+CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -pthread -O3 -Wl,-rpath,/opt/gcc/4.9.2/lib64
 BUILDDIR=bin
 TEST_SRCS=src/single_threaded_tests.cpp src/multi_threaded_tests.cpp src/main.cpp
 
