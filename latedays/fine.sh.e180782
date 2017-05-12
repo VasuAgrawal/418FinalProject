@@ -1,0 +1,2 @@
+cp: cannot stat `/home/vasua/418FinalProject/bin/fine': Permission denied
+/var/spool/torque/mom_priv/jobs/180782.latedays.andrew.cmu.edu.SC: line 10: ./fine: No such file or directory

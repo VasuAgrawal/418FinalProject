@@ -1,0 +1,2 @@
+cp: cannot stat `/home/vasua/418FinalProject/bin/lockfree': Permission denied
+/var/spool/torque/mom_priv/jobs/180766.latedays.andrew.cmu.edu.SC: line 10: ./lockfree: No such file or directory

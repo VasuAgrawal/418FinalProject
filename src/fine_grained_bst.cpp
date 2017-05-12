@@ -1,4 +1,5 @@
 #include "fine_grained_bst.h"
+#include "CycleTimer.h"
 
 #include <iostream>
 
