@@ -15,11 +15,11 @@ void test_all() {
     test_16_threads();
 
     std::cout << "Threads,Contention,Time (ms)" << std::endl;
-    for (int threads = 2; threads <= 32; threads *= 4) {
+    for (int threads = 1; threads <= 32; threads *= 2) {
         for (float contention = 0; contention <= 1; contention += 1.0 / 4) {
             [threads, contention]() -> bool {
               INIT_TEST;
-              test_n_threads_large(threads, contention);
+              test_n_threads_large(threads, contention - .00001);
               EXIT_TEST;
             }();
         }
