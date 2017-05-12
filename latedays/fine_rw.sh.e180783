@@ -1,0 +1,2 @@
+cp: cannot stat `/home/vasua/418FinalProject/bin/fine_rw': Permission denied
+/var/spool/torque/mom_priv/jobs/180783.latedays.andrew.cmu.edu.SC: line 10: ./fine_rw: No such file or directory

@@ -1,0 +1,2 @@
+cp: cannot stat `/home/vasua/418FinalProject/bin/coarse': Permission denied
+/var/spool/torque/mom_priv/jobs/180765.latedays.andrew.cmu.edu.SC: line 10: ./coarse: No such file or directory
