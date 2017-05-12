@@ -28,12 +28,30 @@
       //   // chart.draw(data, options);
       // }
 
-      function drawChart(data) {
-        console.log(data);
-        data = google.visualization.arrayToDataTable(data);
-        var options = { title: 'Coarse-grained Performance' };
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
+      function drawChart(name, graphTitle) {
+
+        $.ajax("data/" + name + "-proc.csv", {
+          datatype: "text",
+          mimeType: "text/plain"
+        })
+          .done(function(data) {
+            var dataTable = google.visualization.arrayToDataTable(processData(data));
+            var options = {
+              title: graphTitle + ' Performance',
+              pointSize: 5,
+              hAxis: {
+                title: 'Threads'
+              },
+              vAxis: {
+                title: 'Execution Time (ms)'
+              }
+            };
+            var chart = new google.visualization.LineChart(document.getElementById(name + "_div"));
+            chart.draw(dataTable, options);
+          })
+          .fail(function() {
+            console.log("error");
+          });
       }
 
       function processData(data) {
@@ -65,13 +83,19 @@
       }
 
       function main() {
-        loadData('data/coarse-ghc43-proc.csv');
+        drawChart('coarse', 'Coarse-Grained Locking');
+        drawChart('fine', 'Fine-Grained Locking');
+        drawChart('fine-rw', 'Fine-Grained RW Locking');
+        drawChart('lockfree', 'Lock Free');
+        drawChart('high-cont', 'High Contention')
       }
     </script>
   </head>
   <body>
-    <div id="chart_div" style="width:1500px; height:900px"/>
-    <script>
-    </script>
+    <div id="coarse_div" style="width:1500px; height:900px"></div>
+    <div id="fine_div" style="width:1500px; height:900px"></div>
+    <div id="fine-rw_div" style="width:1500px; height:900px"></div>
+    <div id="lockfree_div" style="width:1500px; height:900px"></div>
+    <div id="high-cont_div" style="width:1500px; height:900px"></div>
   </body>
 </html>
