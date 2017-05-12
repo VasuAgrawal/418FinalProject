@@ -7,76 +7,37 @@
 
 namespace MultiThreaded {
 
+static int const kLarge = 1 << 20;
+
+
 void test_all() {
-    test_1_threads();
-    test_2_threads();
-    test_4_threads();
-    test_8_threads();
-    test_16_threads();
+    // Write heavy testing
+    //std::cout << "Threads,Contention,Time (ms) (r/w)" << std::endl;
+    //for (int threads = 1; threads <= 32; threads *= 2) {
+        //for (float contention = 0; contention <= 1; contention += 1.0 / 4) {
+            //[threads, contention]() -> bool {
+              //INIT_TEST;
+              //test_n_threads_large(threads, contention - .00001);
+              //EXIT_TEST;
+            //}();
+        //}
+    //}
 
-    std::cout << "Threads,Contention,Time (ms)" << std::endl;
-    for (int threads = 1; threads <= 32; threads *= 2) {
-        for (float contention = 0; contention <= 1; contention += 1.0 / 4) {
-            [threads, contention]() -> bool {
-              INIT_TEST;
-              test_n_threads_large(threads, contention - .00001);
-              EXIT_TEST;
-            }();
-        }
-    }
-}
 
-static int const kTestNThreadsCount = 10000;
-void* test_n_threads_fn(void* info) {
-    ThreadInfo* ti = reinterpret_cast<ThreadInfo*>(info);
-
-    for (int i = ti->tid; i < kTestNThreadsCount; i += ti->thread_count) {
-        ti->bst->insert(i);
-    }
-
-    return nullptr;
+    // Read heavy testing
+    //std::cout << "Threads,Contention,Time (ms) (Read-only)" << std::endl;
+    //for (int threads = 1; threads <= 32; threads *= 2) {
+        //for (float contention = 0; contention <= 1; contention += 1.0 / 4) {
+            //[threads, contention]() -> bool {
+                //INIT_TEST;
+                //test_n_threads_read(threads, contention - .00001);
+                //EXIT_TEST;
+            //}();
+        //}
+    //}
 }
 
 
-bool test_n_threads(size_t n) {
-    bool passed = true;
-    std::vector<pthread_t> threads;
-    std::vector<ThreadInfo> thread_info;
-
-    std::shared_ptr<BinarySearchTree> bst = std::make_shared<BST>();
-    for(size_t i = 0; i < n; ++i) {
-        thread_info.emplace_back(i, n, bst);
-        threads.emplace_back();
-    }
-
-    for (size_t i = 0; i < threads.size(); ++i) {
-        pthread_create(&threads[i], nullptr, test_n_threads_fn, &thread_info[i]);
-    }
-
-    for (auto& t : threads) {
-        pthread_join(t, nullptr);
-    }
-
-    for (int i = 0; i < kTestNThreadsCount; ++i) {
-        EXPECT(bst->contains(i));
-    }
-           
-    return passed;
-}
-
-bool test_1_threads()  { INIT_TEST; EXPECT(test_n_threads(1));  EXIT_TEST; }
-bool test_2_threads()  { INIT_TEST; EXPECT(test_n_threads(2));  EXIT_TEST; }
-bool test_4_threads()  { INIT_TEST; EXPECT(test_n_threads(4));  EXIT_TEST; }
-bool test_8_threads()  { INIT_TEST; EXPECT(test_n_threads(8));  EXIT_TEST; }
-bool test_16_threads() { INIT_TEST; EXPECT(test_n_threads(16)); EXIT_TEST; }
-
-
-bool contains(std::vector<int> v, int x) {
-    return std::find(v.begin(), v.end(), x) != v.end();
-}
-
-static int const kLarge = 1 << 23;
-static int const operCount = 1 << 20;
 void init_choices(std::vector<int>* choices, size_t thread_id, size_t nThreads, 
                   size_t nPerThread, float contention) {
     size_t chunkSize = (size_t) (nPerThread - (nPerThread - 1) * contention);
@@ -92,12 +53,12 @@ void init_choices(std::vector<int>* choices, size_t thread_id, size_t nThreads,
 }
 
 void* test_n_threads_large_fn(void* info) {
-    ThreadLargeInfo* ti = reinterpret_cast<ThreadLargeInfo*>(info);
+    ThreadWriteInfo* ti = reinterpret_cast<ThreadWriteInfo*>(info);
     const size_t nPerThread = kLarge / ti->thread_count;
     std::uniform_int_distribution<int> dist(0, nPerThread - 1);
     std::uniform_int_distribution<int> insRemove(0, 1);
 
-    for (size_t x = 0; x < operCount / ti->thread_count; ++x) {
+    for (size_t x = 0; x < kLarge / ti->thread_count; ++x) {
         bool ins = insRemove(ti->gen) == 1;
         int i = dist(ti->gen);
         int v = (ti->choices)[i];
@@ -119,13 +80,14 @@ bool test_n_threads_large(size_t n, float contention) {
         std::cout << "\tWith contention: " << ANSI_COLOR_CYAN << contention <<
             ANSI_COLOR_RESET << "\n";
 
+    srand(0); // Consistency!
     std::vector<std::default_random_engine> generators;
     std::vector<std::vector<int>> choices;
     std::vector<std::vector<bool>> contains;
 
     std::shared_ptr<BinarySearchTree> bst = std::make_shared<BST>();
     std::vector<pthread_t> threads;
-    std::vector<ThreadLargeInfo> thread_info;
+    std::vector<ThreadWriteInfo> thread_info;
 
     const size_t nPerThread = kLarge / n;
 
@@ -152,9 +114,6 @@ bool test_n_threads_large(size_t n, float contention) {
 
     double end_time = CycleTimer::currentSeconds();
 
-    //std::cout << n << " threads; contention: " << contention << std::endl <<
-        //"\t" << (end_time - start_time)*1000 << " ms\n";
-
     // CSV mode
     std::cout << n << "," << contention << "," << 
       (end_time - start_time) * 1000 << std::endl;
@@ -173,35 +132,73 @@ bool test_n_threads_large(size_t n, float contention) {
     return passed;
 }
 
-bool test_1_threads_large(float contention)  {
-    INIT_TEST;
-    EXPECT(test_n_threads_large(1, contention));
-    EXIT_TEST;
+
+void* test_n_threads_read_fn(void* info) {
+    ThreadReadInfo* ti = reinterpret_cast<ThreadReadInfo*>(info);
+
+    for (const int elem : ti->choices) {
+        ti->bst->contains(elem);
+    }
+
+    return nullptr;
 }
 
-bool test_2_threads_large(float contention)  {
-    INIT_TEST;
-    EXPECT(test_n_threads_large(2, contention));
-    EXIT_TEST;
-}
 
-bool test_4_threads_large(float contention)  {
-    INIT_TEST;
-    EXPECT(test_n_threads_large(4, contention));
-    EXIT_TEST;
-}
+bool test_n_threads_read(size_t n, float contention) {
+    bool passed = true;
+    contention = std::min(1.0f, std::max(0.0f, contention));
+    if (VERBOSE)
+        std::cout << "\tWith contention: " << ANSI_COLOR_CYAN << contention <<
+            ANSI_COLOR_RESET << "\n";
 
-bool test_8_threads_large(float contention)  {
-    INIT_TEST;
-    EXPECT(test_n_threads_large(8, contention));
-    EXIT_TEST;
-}
+    std::vector<std::vector<int>> choices;
 
-bool test_16_threads_large(float contention) {
-    INIT_TEST;
-    EXPECT(test_n_threads_large(16, contention));
-    EXIT_TEST;
-}
+    std::shared_ptr<BinarySearchTree> bst = std::make_shared<BST>();
+    std::vector<pthread_t> threads;
+    std::vector<ThreadReadInfo> thread_info;
 
+    const size_t nPerThread = kLarge / n;
+   
+    srand(0); // Consistency!
+    for (size_t i = 0; i < n; ++i) {
+        choices.emplace_back();
+        init_choices(&(choices[i]), i, n, nPerThread, contention);
+        std::random_shuffle(choices[i].begin(), choices[i].end());
+
+        threads.emplace_back();
+        thread_info.emplace_back(i, n, bst, choices[i]);
+    }
+
+    // Each thread checks some number of elements. Only half of the elements are
+    // going to be in the tree. We add a bunch of odd elements to a vector,
+    // shuffle it, and then add it to the tree.
+    std::vector<int> elements;
+    for (int i = 0; i < kLarge; i += 2) {
+        elements.push_back(i); 
+    }
+    std::random_shuffle(elements.begin(), elements.end());
+
+    for (const int elem : elements) {
+        EXPECT(bst->insert(elem));
+    }
+
+    double start_time = CycleTimer::currentSeconds();
+
+    for (size_t i = 0; i < threads.size(); ++i) {
+        pthread_create(&threads[i], nullptr, test_n_threads_read_fn, &thread_info[i]);
+    }
+
+    for (auto& t : threads) {
+        pthread_join(t, nullptr);
+    }
+
+    double end_time = CycleTimer::currentSeconds();
+
+    // CSV style
+    std::cout << n << "," << contention << "," <<
+        (end_time - start_time) * 1000 << std::endl;
+
+    return passed;
+}
 
 } // namespace MultiThreaded
