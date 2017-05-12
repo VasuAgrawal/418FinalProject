@@ -23,7 +23,7 @@ def process(fname):
             row = [timings[tnum][cont] for cont in sorted(timings[tnum])]
             writer.writerow([tnum] + row)
 
-process('coarse-read.csv')
-process('fine-read.csv')
-process('fine-rw-read.csv')
-# process('lockfree.csv')
+process('low-cont.csv')
+process('high-cont.csv')
+process('low-cont-read.csv')
+process('high-cont-read.csv')
