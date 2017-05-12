@@ -35,3 +35,23 @@ function makeGraph(csvFile, graphTitle, xTitle, yTitle, divId) {
 
     });
 }
+
+function drawAllCharts() {
+
+    $('.graph').each(function () {
+        var $this = $(this);
+        $this.css({
+            width : '100%',
+            height : '400px'
+        });
+        var xTitle = $this.attr('x-title');
+        xTitle = xTitle ? xTitle : 'Threads';
+        var yTitle = $this.attr('y-title');
+        yTitle = yTitle ? yTitle : 'Execution time (ms)';
+        makeGraph($this.attr('csv'), $this.attr('title'), xTitle, yTitle, this.id);
+    });
+
+}
+
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawAllCharts);

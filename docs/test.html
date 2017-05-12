@@ -75,9 +75,6 @@
   </head>
   <body>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="makeGraph.js"></script>
 
 <div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
 <div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
@@ -93,6 +90,8 @@
      title="Write-Intensive Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
 <div class="graph" id="lockfree-read-spdup_chart" csv="lockfree-read-proc-spdup"
      title="Read-Only Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+
+<!--
 
 <script type="text/javascript">
 google.charts.load('current', {'packages':['corechart']});
@@ -112,7 +111,7 @@ google.charts.setOnLoadCallback(function() {
     });
 
 });
-</script>
+</script> -->
 
     <!--
     <div id="coarse-proc_div" style="width:1500px; height:900px"></div>
@@ -136,4 +135,9 @@ google.charts.setOnLoadCallback(function() {
 
     -->
   </body>
+
+  
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="makeGraph.js"></script>
 </html>
