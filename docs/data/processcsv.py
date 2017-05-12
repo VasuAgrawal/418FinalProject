@@ -17,13 +17,19 @@ def process(fname):
     newname = fname[:-4] + '-proc.csv'
     with open(newname, 'w', newline='') as newcsvfile:
         writer = csv.writer(newcsvfile, delimiter=',')
-        row = ['Thread Count'] + [x+(0 if x == 0 else .00001) for x in sorted(timings[1])]
+        row = ['Thread Count'] + ["%d%% Contention"%((x+(0 if x == 0 else .00001))*100) for x in sorted(timings[1])]
         writer.writerow(row)
         for tnum in sorted(timings):
             row = [timings[tnum][cont] for cont in sorted(timings[tnum])]
             writer.writerow([tnum] + row)
 
-process('low-cont.csv')
-process('high-cont.csv')
-process('low-cont-read.csv')
-process('high-cont-read.csv')
+process('coarse.csv')
+process('fine.csv')
+process('fine-rw.csv')
+process('lockfree.csv')
+
+
+process('coarse-read.csv')
+process('fine-read.csv')
+process('fine-rw-read.csv')
+process('lockfree-read.csv')
