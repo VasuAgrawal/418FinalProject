@@ -396,6 +396,7 @@ Equal work was performed by both project members.
   Deck](https://docs.google.com/presentation/d/1RhBI1PinvXbjd9-OVcO_GpeWBTiM1-2giSM0LqCGFN8/edit?usp=sharing)
 
 ## Appendix
+### Write-Heavy Workloads
 <div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
 <br/>
 <div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
@@ -405,6 +406,7 @@ Equal work was performed by both project members.
 <div class="graph" id="lockfree_chart" csv="lockfree-proc" title="Write-Intensive, Lock-Free"></div>
 <br/>
 
+### Read-Only Workloads
 <div class="graph" id="coarse-read_chart" csv="coarse-read-proc" title="Read-Only, Coarse-Grained Locking"></div>
 <br/>
 <div class="graph" id="fine-read_chart" csv="fine-read-proc" title="Read-Only, Fine-Grained Locking"></div>
