@@ -177,8 +177,15 @@ We performed analysis under two different types of workloads, namely a
 read-only and a write-heavy workload. Each of the two workloads is performed
 with a varying number of threads (1, 2, 4, 8, 16, 32), and is performed with a
 varying "contention factor". For both of the following workloads, we set `N` to
-be approximately 1 million elements. All souces of randomness are seeded with
-the same value to ensure consistency across tests.
+be approximately 1 million elements. This value was chosen to be sufficiently
+large such as to have the operation take a nontrivial amount of time, while also
+being small enough to allow the tree to fit in memory. We believe that the value
+is sufficiently large such that operations tend to happen reasonably far away
+from the root, and that increasing the number of elements would not provide much
+additional benefit in this regard. Testing revealed that the same trends applied
+at larger values of `N`, and so this value of `N` was chosen as a means of
+optimizing for testing time. Also note that all souces of randomness are 
+seeded with the same value to ensure consistency across tests.
 
 ### Write-heavy Workload
 
@@ -194,7 +201,7 @@ wide variety of potential conflict scenarios. The final tally for operations
 done on each element (removed or inserted) is returned by each thread to use for
 a correctness test as well.
 
-Performance is measured as the total time taken (on the latedays cluster) to
+Performance is measured as the total CPU time taken (on the latedays cluster) to
 execute these `N` operations, measured from thread creation to thread join. The
 time taken to set up the threads and perform the correctness test are not
 included.
@@ -212,7 +219,7 @@ creating the thread. This allows the threads to have the simple task of
 iterating through the range and simply checking membership on each element. Half
 of these checks will fail as only even elements are in the BST.
 
-Performance is measured as the total time taken (on the latedays cluster) to
+Performance is measured as the total CPU time taken (on the latedays cluster) to
 execute these `N` contains operations, measured from thread creation to thread
 join. The time taken to set up the threads, data structures, shuffle, etc. are
 not included.
@@ -229,28 +236,37 @@ interpolate between these chunk sizes. Consider an example with 1024 elements
 and 8 threads below.
 
 0% Contention:
-* Thread 0: [  0,   1, …,  126,  127]
-* Thread 7: [896, 897, …, 1023, 1024]
+* Thread 0: `[  0,   1, …,  126,  127]`
+* Thread 7: `[896, 897, …, 1023, 1024]`
+
 100% Contention:
-* Thread 0: [0,  8, 16, …, 1016]
-* Thread 7: [7, 15, 23, …, 1023]
+* Thread 0: `[0,  8, 16, …, 1016]`
+* Thread 7: `[7, 15, 23, …, 1023]`
 
 ## Results
 
-<div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
-<div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
-<div class="graph" id="fine-rw_chart" csv="fine-rw-proc" title="Write-Intensive, Fine-Grained RW Locking"></div>
-<div class="graph" id="lockfree_chart" csv="lockfree-proc" title="Write-Intensive, Lock-Free"></div>
+### Write-Heavy Workloads
+<div class="graph" id="summary_write_high" csv="high-cont-proc" title="Write-Intensive Summary, High Contention"></div>
+<br />
+<div class="graph" id="summary_write_low" csv="low-cont-proc" title="Write-Intensive Summary, Low Contention"></div>
 
-<div class="graph" id="coarse-read_chart" csv="coarse-read-proc" title="Read-Only, Coarse-Grained Locking"></div>
-<div class="graph" id="fine-read_chart" csv="fine-read-proc" title="Read-Only, Fine-Grained Locking"></div>
-<div class="graph" id="fine-rw-read_chart" csv="fine-rw-read-proc" title="Read-Only, Fine-Grained RW Locking"></div>
-<div class="graph" id="lockfree-read_chart" csv="lockfree-read-proc" title="Read-Only, Lock-Free"></div>
+Insert text analyzing write-heavy workloads here
+
+### Read-Only Workloads
+<div class="graph" id="summary_read_high" csv="high-cont-read-proc" title="Read-Only Summary, High Contention"></div>
+<br />
+<div class="graph" id="summary_read_low" csv="low-cont-read-proc" title="Read-Only Summary, Low Contention"></div>
+
+Insert text about read-only workloads here
+
+### Lock-free Speedup
 
 <div class="graph" id="lockfree-spdup_chart" csv="lockfree-proc-spdup"
      title="Write-Intensive Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
 <div class="graph" id="lockfree-read-spdup_chart" csv="lockfree-read-proc-spdup"
      title="Read-Only Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+
+Insert some text about lockfree speedup
 
 ## References
 
@@ -263,12 +279,23 @@ Developed by [Vasu Agrawal](https://github.com/VasuAgrawal) and
 
 ## Separation of Work
 
-Equal work was performed by both partners.
+Equal work was performed by both project members.
 
 ## Links
 
 - [Proposal](https://vasuagrawal.github.io/418FinalProject/proposal)
 - [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
+
+## Appendix
+<div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
+<div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
+<div class="graph" id="fine-rw_chart" csv="fine-rw-proc" title="Write-Intensive, Fine-Grained RW Locking"></div>
+<div class="graph" id="lockfree_chart" csv="lockfree-proc" title="Write-Intensive, Lock-Free"></div>
+
+<div class="graph" id="coarse-read_chart" csv="coarse-read-proc" title="Read-Only, Coarse-Grained Locking"></div>
+<div class="graph" id="fine-read_chart" csv="fine-read-proc" title="Read-Only, Fine-Grained Locking"></div>
+<div class="graph" id="fine-rw-read_chart" csv="fine-rw-read-proc" title="Read-Only, Fine-Grained RW Locking"></div>
+<div class="graph" id="lockfree-read_chart" csv="lockfree-read-proc" title="Read-Only, Lock-Free"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
