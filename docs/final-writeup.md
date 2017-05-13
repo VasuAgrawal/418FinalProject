@@ -392,6 +392,8 @@ Equal work was performed by both project members.
 
 * [Proposal](https://vasuagrawal.github.io/418FinalProject/proposal)
 * [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
+* [Final Slide
+  Deck](https://docs.google.com/presentation/d/1RhBI1PinvXbjd9-OVcO_GpeWBTiM1-2giSM0LqCGFN8/edit?usp=sharing)
 
 ## Appendix
 <div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
