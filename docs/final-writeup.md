@@ -249,24 +249,131 @@ and 8 threads below.
 <div class="graph" id="summary_write_high" csv="high-cont-proc" title="Write-Intensive Summary, High Contention"></div>
 <br />
 <div class="graph" id="summary_write_low" csv="low-cont-proc" title="Write-Intensive Summary, Low Contention"></div>
+<br />
 
-Insert text analyzing write-heavy workloads here
+In both of these plots, we see that the fine-grained solutions perform very
+poorly. We believe that this is a combination of significant amounts of
+contention at every single node, most notably at the top. Every path has to go
+through the root node, and so every thread will attempt to lock it and many of
+the immediate descendants. This is likely causing more overall waiting than the
+coarse grained solution, in which a lock is taken once and then the entire tree
+is traversed.
+
+Another interesting observation is that the performance of the fine-grained
+implementations drops spectacularly at 4 threads, rather than at 2 as might
+otherwise be expected. We suspect that this is because with two threads, an
+interleaving is possible in which 2 threads can tradeoff between holding the
+locks and performing computation, but as additional threads are added
+significantly more time is spent blocking for locks, preventing high
+performance. Of the two, the reader-writer locks implementation is generally the
+slower, and we believe this to be due to the additional complexity of
+maintaining counters for readers and writers, rather than a simple bit for a
+standard mutex.
+
+While the fine-grained solution performs incredibly poorly, the lock-free
+solution shows remarkable performance. There are no locks to be taken anywhere
+in the system, meaning that it is impossible for the algorithm to block at the
+top levels of the tree, where all threads are constantly vying for locks. All
+operations can and do seem to happen in almost complete parallel.
+
+One final point of note is that there is that the two plots seem almost
+identical even though the contention factors are quite different. This suggests
+that there are more fundamental issues at play driving the performance of the
+implementations than where in the tree nodes are being accessed.
 
 ### Read-Only Workloads
 <div class="graph" id="summary_read_high" csv="high-cont-read-proc" title="Read-Only Summary, High Contention"></div>
 <br />
 <div class="graph" id="summary_read_low" csv="low-cont-read-proc" title="Read-Only Summary, Low Contention"></div>
+<br />
 
-Insert text about read-only workloads here
+Here, we again see the fine-grained solution performing extremely poorly when
+compared to the coarse and lock-free solutions. We believe this is due to the
+same issues of blocking at the root that we observed in the write-heavy
+workload, since approximately the same amount of traversal is needed in both
+workloads. This time, however, using the reader-writer locks in the fine-grained
+solution makes a significant difference in performance, bringing the performance
+to approximately the same level as the coarse-grained baseline. This is
+explicitly because multiple threads can hold reader locks on the same nodes, so
+no blocking is necessary. One might suspect that under this workload we should
+see even better performance due to there only being reads, but we believe the
+overhead of constantly making syscalls to lock and unlock, even if there is no
+blocking, is killing performance.
+
+Similarly, once again the lock-free solution exhibits almost perfect parallelism
+when scaling up to multiple threads. This is for the same reasons as described
+above, namely that by eliminating contention at the top levels of the tree,
+significant performance gains can and are achieved.
+
+Once again, we note that contention factor does not play a significant role in
+the performance of the various algorithms.
 
 ### Lock-free Speedup
 
 <div class="graph" id="lockfree-spdup_chart" csv="lockfree-proc-spdup"
      title="Write-Intensive Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+<br />
 <div class="graph" id="lockfree-read-spdup_chart" csv="lockfree-read-proc-spdup"
      title="Read-Only Lock-Free Speedup" y-title="Speedup (vs. 1 thread)"></div>
+<br />
 
-Insert some text about lockfree speedup
+With lock-free being our highest performer, we wanted to further analyze its
+performance characteristics under both the read and write workloads. We find
+that the lock-free implementation exhibits an ideal linear speedup in the
+read-heavy workloads, and still achieves respectable speedups in the write-heavy
+workloads. In the read-heavy case, we see performance peak at around 22-23x
+speedup with 32 threads. This is not a coincidence; there are only 24 execution
+contexts on the latedays machines, and achieving this speedup means that we are
+effectively utilizing the entire compute capability of the machine nearly
+perfectly. Adding additional threads beyond 24 offers no additional speedup as
+the computer does not have more performance left to offer.
+
+Here, we do see the effects of the contention factor differentiating the various
+test cases. We would expect the lowest contention factor to offer the fastest
+performance, but this is not the case in either of the plots. We believe this to
+be a function of the tree construction, and the specific order of inserts and
+removals which greatly affects the topology of the graph in each of the cases.
+This suggests that the randomness approach employed to shuffle the data may not
+be ideal for performance testing, even though the seeds are kept consistent.
+
+### Results Summary
+
+From our analysis, a few trends start to appear. As mentioned, we found that the
+contention factor had relatively little impact compared to the implementation
+itself. We found that the coarse-grained solution performs much better than
+expected, and thus it may be worth simply wrapping a non-threadsafe BST in a
+mutex for a simple and effective threadsafe BST. Unfortunately, we found the
+fine-grained implementations to be slower in all tests except for read-only with
+the reader-writer locks, where we achieved baseline performance. This indicates
+that fine-grained locking offers more overhead than potential concurrency,
+suggesting that fine-grained is best left as a theoretical exercise. Finally,
+perhaps as expected, we found the lock-free implementation to perform
+exceedingly well, though we were still pleasantly surprised to find it
+demonstrate near perfect speedup.
+
+In the appendix section below, we have provided plots of all combinations of
+contention, workload, and implementation that we tested.
+
+### Future Work
+
+In completing this analysis of BSTs, a number of ideas for potential future
+projects arose. Our particular favorites are presented below:
+
+* Templated BSTs to analyze performance of object size. Currently, the trees
+  operate only on 32 bit integers. We are curious to see how performance of the
+  implementations would change when only a single node is able to fit on a cache
+  line, rather than multiple. This would also make the implementations more
+  generic.
+* Custom memory allocator to increase cache utilization. Nodes are currently
+  allocated in insertion order with the creation of a new object on the heap,
+  potentially scattering them around memory. We believe that the addition of a
+  custom memory allocator would allow nodes close to each other in the tree to
+  be contiguous in memory, which is an ideal case for cache usage.
+* Distributed lock-free BST. In order to expand on our implementation of the
+  lock-free BST, we consider the possibility of distributing it over multiple
+  nodes in a cluster. This could take the form of multiple copies over a large
+  physical space (e.g. continents) providing eventual consistency, or exploring
+  lock-free trees which are too big to fit on a single computer's memory.
 
 ## References
 
@@ -283,18 +390,25 @@ Equal work was performed by both project members.
 
 ## Links
 
-- [Proposal](https://vasuagrawal.github.io/418FinalProject/proposal)
-- [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
+* [Proposal](https://vasuagrawal.github.io/418FinalProject/proposal)
+* [Project Checkpoint](https://vasuagrawal.github.io/418FinalProject/checkpoint)
 
 ## Appendix
 <div class="graph" id="coarse_chart" csv="coarse-proc" title="Write-Intensive, Coarse-Grained Locking"></div>
+<br/>
 <div class="graph" id="fine_chart" csv="fine-proc" title="Write-Intensive, Fine-Grained Locking"></div>
+<br/>
 <div class="graph" id="fine-rw_chart" csv="fine-rw-proc" title="Write-Intensive, Fine-Grained RW Locking"></div>
+<br/>
 <div class="graph" id="lockfree_chart" csv="lockfree-proc" title="Write-Intensive, Lock-Free"></div>
+<br/>
 
 <div class="graph" id="coarse-read_chart" csv="coarse-read-proc" title="Read-Only, Coarse-Grained Locking"></div>
+<br/>
 <div class="graph" id="fine-read_chart" csv="fine-read-proc" title="Read-Only, Fine-Grained Locking"></div>
+<br/>
 <div class="graph" id="fine-rw-read_chart" csv="fine-rw-read-proc" title="Read-Only, Fine-Grained RW Locking"></div>
+<br/>
 <div class="graph" id="lockfree-read_chart" csv="lockfree-read-proc" title="Read-Only, Lock-Free"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
